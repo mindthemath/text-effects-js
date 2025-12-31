@@ -33,6 +33,24 @@
         </div>
       </div>
 
+      <div class="control-section" id="boardBackgroundControl" style="display: none;">
+        <h3>Board Background</h3>
+        <div class="control-group">
+          <label class="radio-label">
+            <input type="radio" name="boardBg" value="black" checked>
+            <span>Black</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="boardBg" value="white">
+            <span>White</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="boardBg" value="invisible">
+            <span>Invisible</span>
+          </label>
+        </div>
+      </div>
+
       <div class="control-section">
         <h3>Timing</h3>
         <div class="control-group vertical">
@@ -44,14 +62,14 @@
               </label>
             </div>
             <div class="color-input-group" style="flex: 0 0 auto; width: 100px;">
-              <input type="color" id="firstWordColor" class="color-input" value="#1a1a1a">
+              <input type="color" id="firstWordColor" class="color-input" value="#ff0000">
             </div>
           </div>
           <div style="display: flex; gap: 1rem; align-items: flex-end;">
             <div style="flex: 1;">
               <label class="slider-label">
-                Other: <span id="otherTimeValue">2.0s</span>
-                <input type="range" id="otherTime" min="500" max="5000" value="2000" step="500">
+                Other: <span id="otherTimeValue">0.5s</span>
+                <input type="range" id="otherTime" min="500" max="5000" value="500" step="500">
               </label>
             </div>
             <div class="color-input-group" style="flex: 0 0 auto; width: 100px;">
@@ -110,13 +128,31 @@ Education</textarea>
       words: initialWords,
       mode: 'wheel',
       mathInterval: 3000,
-      otherInterval: 2000,
+      otherInterval: 500,
+      onRotate: (index, isFinished) => {
+        applyVariableColor(isFinished);
+      }
     });
 
     // Handle mode switching
+    const boardBgControl = document.getElementById('boardBackgroundControl');
+    // Initial state check
+    boardBgControl.style.display = rotator.mode === 'flip' ? 'block' : 'none';
+
     document.querySelectorAll('input[name="mode"]').forEach(radio => {
       radio.addEventListener('change', (e) => {
         rotator.setMode(e.target.value);
+        boardBgControl.style.display = e.target.value === 'flip' ? 'block' : 'none';
+        // Reapply colors after mode change
+        setTimeout(() => applyVariableColor(true), 0);
+      });
+    });
+
+    // Handle board background switching
+    document.querySelectorAll('input[name="boardBg"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        const rotatorElement = document.getElementById('wordRotator');
+        rotatorElement.setAttribute('data-board-bg', e.target.value);
       });
     });
 
@@ -176,24 +212,54 @@ Education</textarea>
     const firstWordColorInput = document.getElementById('firstWordColor');
     
     // Function to apply variable color to all word elements (except first)
-    const applyVariableColor = () => {
+    const applyVariableColor = (isFinished = true) => {
+      const firstColor = firstWordColorInput.value;
+      const otherColor = variableColorInput.value;
+
+      // For Wheel Mode
       const wordElements = document.querySelectorAll('.word');
       wordElements.forEach((word, index) => {
-        // First word (index 0) gets its own color, others get variable color
         if (index === 0) {
-          word.style.color = firstWordColorInput.value;
+          word.style.color = firstColor;
         } else {
-          word.style.color = variableColorInput.value;
+          word.style.color = otherColor;
         }
       });
+
+      // For Flip Mode
+      if (rotator.mode === 'flip') {
+        const flapContents = document.querySelectorAll('.flap-content');
+        if (flapContents.length === 0) return;
+
+        const currIndex = rotator.currentIndex;
+        const currColor = currIndex === 0 ? firstColor : otherColor;
+
+        if (isFinished) {
+          // Resting state: ALL parts show the current word color
+          flapContents.forEach(content => {
+            content.style.color = currColor;
+          });
+        } else {
+          // Transition state:
+          // Top halves revealed (top-static, leaf-back) show the NEXT color (currColor)
+          // Bottom halves still visible (bottom-static, leaf-front) show the PREVIOUS color
+          const prevIndex = (currIndex - 1 + rotator.words.length) % rotator.words.length;
+          const prevColor = prevIndex === 0 ? firstColor : otherColor;
+
+          // Parts showing the outgoing word
+          const outgoingParts = document.querySelectorAll('.bottom-static .flap-content, .flap-leaf-front .flap-content');
+          outgoingParts.forEach(el => el.style.color = prevColor);
+
+          // Parts showing the incoming word
+          const incomingParts = document.querySelectorAll('.top-static .flap-content, .flap-leaf-back .flap-content');
+          incomingParts.forEach(el => el.style.color = currColor);
+        }
+      }
     };
     
     // Function to apply first word color
     const applyFirstWordColor = () => {
-      const wordElements = document.querySelectorAll('.word');
-      if (wordElements.length > 0) {
-        wordElements[0].style.color = firstWordColorInput.value;
-      }
+      applyVariableColor(true); 
     };
 
     fixedColorInput.addEventListener('input', (e) => {
@@ -218,7 +284,7 @@ Education</textarea>
       originalSetWords(newWords);
       // Wait for DOM update, then apply colors
       setTimeout(() => {
-        applyVariableColor();
+        applyVariableColor(true);
       }, 0);
     };
   </script>

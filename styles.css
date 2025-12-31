@@ -16,8 +16,9 @@ body {
 
 .hero-container {
   text-align: left;
-  max-width: 900px;
+  max-width: 1200px; /* Wider to accommodate longer words in flip mode */
   width: 100%;
+  overflow-x: visible; /* Allow content to expand if needed */
 }
 
 .hero-text {
@@ -35,6 +36,7 @@ body {
 .static-text {
   display: inline-block;
   white-space: nowrap;
+  flex-shrink: 0; /* Prevent static text from shrinking */
 }
 
 .word-rotator {
@@ -46,6 +48,11 @@ body {
   overflow: hidden;
   white-space: nowrap;
   vertical-align: middle; /* Align with static text */
+  flex-shrink: 0; /* Prevent rotator from shrinking */
+}
+
+.word-rotator[data-mode="flip"] {
+  min-width: 300px; /* Wider minimum for flip mode to accommodate longer words */
 }
 
 .word {
@@ -98,6 +105,7 @@ body {
   vertical-align: middle;
 }
 
+/* Default Black Mode / Base Styles */
 .flap-container {
   position: relative;
   width: 100%;
@@ -106,7 +114,7 @@ body {
   border-radius: 4px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
   color: #fff;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'OCR A', 'OCR-A', 'Courier New', Courier, monospace;
   font-weight: 900;
   text-transform: uppercase;
   border: 1px solid #333;
@@ -199,9 +207,48 @@ body {
   bottom: 0;
 }
 
-/* Add a subtle gradient to flaps for more realism */
 .flap, .flap-leaf-front, .flap-leaf-back {
   background: linear-gradient(to bottom, #2a2a2a 0%, #1a1a1a 100%);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+/* Background Modes - High Specificity */
+[data-board-bg="white"] .flap-container {
+  background: #ffffff !important;
+  border-color: #dddddd !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important;
+}
+[data-board-bg="white"] .flap,
+[data-board-bg="white"] .flap-leaf-front,
+[data-board-bg="white"] .flap-leaf-back {
+  background: #ffffff !important;
+}
+[data-board-bg="white"] .flap-container::after {
+  background: #dddddd !important;
+}
+
+[data-board-bg="invisible"] .flap-container {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+[data-board-bg="invisible"] .flap,
+[data-board-bg="invisible"] .flap-leaf-front,
+[data-board-bg="invisible"] .flap-leaf-back {
+  background: transparent !important;
+}
+[data-board-bg="invisible"] .flap-container::after {
+  background: rgba(0,0,0,0.1) !important;
+}
+
+[data-board-bg="black"] .flap-container {
+  background: #1a1a1a !important;
+  border-color: #333 !important;
+}
+[data-board-bg="black"] .flap,
+[data-board-bg="black"] .flap-leaf-front,
+[data-board-bg="black"] .flap-leaf-back {
+  background: linear-gradient(to bottom, #2a2a2a 0%, #1a1a1a 100%) !important;
 }
 
 /* Central dividing line and shadow */
@@ -216,6 +263,7 @@ body {
   z-index: 20;
   transform: translateY(-50%);
   box-shadow: 0 1px 1px rgba(255,255,255,0.1);
+  transition: background 0.3s ease;
 }
 
 /* Controls */

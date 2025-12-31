@@ -4,7 +4,8 @@ class WordRotator {
     this.words = config.words || ["Math"]
     this.mode = config.mode || "wheel"
     this.mathInterval = config.mathInterval || 3000
-    this.otherInterval = config.otherInterval || 2000
+    this.otherInterval = config.otherInterval || 500
+    this.onRotate = config.onRotate || null
 
     this.currentIndex = 0
     this.timeoutId = null
@@ -113,7 +114,13 @@ class WordRotator {
     tempMeasure.style.whiteSpace = "nowrap"
     tempMeasure.style.fontSize = window.getComputedStyle(this.element).fontSize
     tempMeasure.style.fontWeight = "900"
-    tempMeasure.style.fontFamily = "'Courier New', Courier, monospace"
+    
+    // Use appropriate font for measurement based on mode
+    if (this.mode === "flip") {
+      tempMeasure.style.fontFamily = "'OCR A', 'OCR-A', 'Courier New', Courier, monospace"
+    } else {
+      tempMeasure.style.fontFamily = window.getComputedStyle(this.element).fontFamily
+    }
     tempMeasure.style.textTransform = "uppercase"
     document.body.appendChild(tempMeasure)
 
@@ -128,8 +135,10 @@ class WordRotator {
 
     document.body.removeChild(tempMeasure)
 
-    // Set container width with left padding in mind
-    const finalWidth = Math.max(maxWidth + 60, 240) 
+    // Set container width - more generous padding for flip mode to accommodate longer words
+    const padding = this.mode === "flip" ? 100 : 60
+    const minWidth = this.mode === "flip" ? 280 : 240
+    const finalWidth = Math.max(maxWidth + padding, minWidth) 
     this.element.style.width = `${finalWidth}px`
     
     if (this.mode === "flip") {
@@ -185,6 +194,8 @@ class WordRotator {
       nextElement.style.transform = "translateY(0)"
       nextElement.style.opacity = "1"
 
+      if (this.onRotate) this.onRotate(this.currentIndex, true)
+
       // After animation completes, reposition the exited word at the bottom for continuous loop
       setTimeout(() => {
         currentElement.classList.remove("exiting")
@@ -223,6 +234,8 @@ class WordRotator {
     this.flapLeaf.style.transition = "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
     this.flapLeaf.classList.add("flipping")
 
+    if (this.onRotate) this.onRotate(this.currentIndex, false)
+
     // After animation finish, sync the states
     setTimeout(() => {
       this.flapBottom.textContent = nextWord
@@ -230,6 +243,8 @@ class WordRotator {
       
       this.flapLeaf.style.transition = "none"
       this.flapLeaf.classList.remove("flipping")
+
+      if (this.onRotate) this.onRotate(this.currentIndex, true)
     }, 450)
 
     // Schedule next rotation
