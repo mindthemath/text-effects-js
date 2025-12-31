@@ -13,13 +13,14 @@
 </head>
 
 <body>
-  <div class="hero-container">
-    <h1 class="hero-text">
-      <span class="static-text">MIND THE</span>
-      <span class="word-rotator" id="wordRotator">
-        <span class="word active">Math</span>
-      </span>
-    </h1>
+  <div class="main-content">
+    <div class="hero-container">
+      <h1 class="hero-text">
+        <span class="static-text">MIND THE</span>
+        <span class="word-rotator" id="wordRotator">
+          <span class="word active">Math</span>
+        </span>
+      </h1>
 
     <!-- Added comprehensive configuration controls -->
     <div class="demo-controls">
@@ -147,6 +148,80 @@ Education</textarea>
           <button id="updateWords" class="btn-primary">Update</button>
           <button id="resetWords" class="btn-secondary">Reset</button>
         </div>
+      </div>
+    </div>
+  </div>
+  </div> <!-- End main-content -->
+
+  <!-- Code Generator Section -->
+  <div class="code-generator">
+    <div class="code-generator-header">
+      <h2>Export Your Configuration</h2>
+      <p>Copy these snippets to add this effect to your site</p>
+    </div>
+    
+    <div class="code-tabs">
+      <button class="code-tab active" data-tab="html">HTML</button>
+      <button class="code-tab" data-tab="css">CSS Link</button>
+      <button class="code-tab" data-tab="js">JavaScript</button>
+      <button class="code-tab" data-tab="all">All-in-One</button>
+    </div>
+
+    <div class="code-panels">
+      <div class="code-panel active" id="panel-html">
+        <div class="code-panel-header">
+          <span>Add this HTML where you want the effect</span>
+          <button class="copy-btn" data-target="code-html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Copy
+          </button>
+        </div>
+        <pre class="code-block"><code id="code-html"></code></pre>
+      </div>
+
+      <div class="code-panel" id="panel-css">
+        <div class="code-panel-header">
+          <span>Add this in your &lt;head&gt;</span>
+          <button class="copy-btn" data-target="code-css">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Copy
+          </button>
+        </div>
+        <pre class="code-block"><code id="code-css"></code></pre>
+      </div>
+
+      <div class="code-panel" id="panel-js">
+        <div class="code-panel-header">
+          <span>Add this before &lt;/body&gt;</span>
+          <button class="copy-btn" data-target="code-js">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Copy
+          </button>
+        </div>
+        <pre class="code-block"><code id="code-js"></code></pre>
+      </div>
+
+      <div class="code-panel" id="panel-all">
+        <div class="code-panel-header">
+          <span>Complete implementation</span>
+          <button class="copy-btn" data-target="code-all">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Copy
+          </button>
+        </div>
+        <pre class="code-block"><code id="code-all"></code></pre>
       </div>
     </div>
   </div>
@@ -303,6 +378,13 @@ Education</textarea>
       rotator.setWords(['Math', 'Art', 'Engineering', 'Computation', 'Design', 'Education']);
     });
 
+    // Update code preview when word list textarea changes
+    wordListTextarea.addEventListener('input', () => {
+      if (typeof updateCodeSnippets === 'function') {
+        updateCodeSnippets();
+      }
+    });
+
     // Handle fixed phrase updates
     const fixedPhraseInput = document.getElementById('fixedPhrase');
     const staticTextElement = document.querySelector('.static-text');
@@ -396,8 +478,183 @@ Education</textarea>
       // Wait for DOM update, then apply colors
       setTimeout(() => {
         applyVariableColor(true);
+        updateCodeSnippets();
       }, 0);
     };
+
+    // ========================================
+    // Code Generator
+    // ========================================
+    const CDN_BASE = 'https://cdn.jsdelivr.net/gh/mindthemath/text-effects-js@main';
+    
+    const codeHtml = document.getElementById('code-html');
+    const codeCss = document.getElementById('code-css');
+    const codeJs = document.getElementById('code-js');
+    const codeAll = document.getElementById('code-all');
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function getWordsArray() {
+      return wordListTextarea.value
+        .split('\n')
+        .map(w => w.trim())
+        .filter(w => w.length > 0);
+    }
+
+    function getCurrentConfig() {
+      const mode = document.querySelector('input[name="mode"]:checked')?.value || 'flip';
+      const timingMode = document.querySelector('input[name="timingMode"]:checked')?.value || 'pause';
+      const boardBg = document.querySelector('input[name="boardBg"]:checked')?.value || 'black';
+      const boardFont = document.getElementById('boardFont')?.value || "'Source Code Pro', monospace";
+      const mathTime = parseInt(document.getElementById('mathTime')?.value || 3000);
+      const otherTime = parseInt(document.getElementById('otherTime')?.value || 500);
+      const firstWordColor = document.getElementById('firstWordColor')?.value || '#ff0000';
+      const otherColor = document.getElementById('variableColor')?.value || '#666666';
+      const fixedPhrase = document.getElementById('fixedPhrase')?.value || 'Mind the';
+      const fixedColor = document.getElementById('fixedColor')?.value || '#1a1a1a';
+      const words = getWordsArray();
+
+      return { mode, timingMode, boardBg, boardFont, mathTime, otherTime, firstWordColor, otherColor, fixedPhrase, fixedColor, words };
+    }
+
+    function generateHtmlSnippet(config) {
+      const wordsJson = JSON.stringify(config.words);
+      return `<div class="hero-text">
+  <span class="static-text" style="color: ${config.fixedColor}; font-family: ${config.boardFont};">${escapeHtml(config.fixedPhrase)}</span>
+  <span id="wordRotator" class="word-rotator" data-mode="${config.mode}" data-board-bg="${config.boardBg}"></span>
+</div>`;
+    }
+
+    function generateCssSnippet() {
+      return `<!-- Text Effects CSS -->
+<link rel="stylesheet" href="${CDN_BASE}/styles.css">
+
+<!-- Web Fonts (optional - for flip mode fonts) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@900&family=Roboto+Mono:wght@900&family=Source+Code+Pro:wght@900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">`;
+    }
+
+    function generateJsSnippet(config) {
+      const wordsStr = config.words.map(w => `'${w}'`).join(', ');
+      return `<!-- Text Effects JS -->
+<script src="${CDN_BASE}/word-rotator.js"><\/script>
+<script>
+  const animatedText = new WordRotator({
+    elementId: 'wordRotator',
+    words: [${wordsStr}],
+    mode: '${config.mode}',
+    timingMode: '${config.timingMode}',
+    mathInterval: ${config.mathTime},
+    otherInterval: ${config.otherTime},
+    onLetterLand: (letterIndex, letter, wordIndex, isAccent) => {
+      // Apply accent color to first word letters
+      const color = isAccent ? '${config.firstWordColor}' : '${config.otherColor}';
+      const flaps = document.querySelectorAll('.letter-flap');
+      if (letterIndex < flaps.length) {
+        flaps[letterIndex].querySelectorAll('.flap-content').forEach(el => {
+          el.style.color = color;
+        });
+      }
+    }
+  });
+
+  // Apply board font (flip mode)
+  document.querySelectorAll('.letter-flap, .flap-content').forEach(el => {
+    el.style.fontFamily = "${config.boardFont}";
+  });
+<\/script>`;
+    }
+
+    function generateAllInOneSnippet(config) {
+      return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text Effect</title>
+  
+  ${generateCssSnippet()}
+</head>
+<body>
+
+${generateHtmlSnippet(config)}
+
+${generateJsSnippet(config)}
+</body>
+</html>`;
+    }
+
+    function updateCodeSnippets() {
+      const config = getCurrentConfig();
+      
+      codeHtml.textContent = generateHtmlSnippet(config);
+      codeCss.textContent = generateCssSnippet();
+      codeJs.textContent = generateJsSnippet(config);
+      codeAll.textContent = generateAllInOneSnippet(config);
+    }
+
+    // Tab switching
+    document.querySelectorAll('.code-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.code-panel').forEach(p => p.classList.remove('active'));
+        
+        tab.classList.add('active');
+        document.getElementById(`panel-${tab.dataset.tab}`).classList.add('active');
+      });
+    });
+
+    // Copy functionality
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const targetId = btn.dataset.target;
+        const codeEl = document.getElementById(targetId);
+        
+        try {
+          await navigator.clipboard.writeText(codeEl.textContent);
+          btn.classList.add('copied');
+          btn.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            Copied!
+          `;
+          
+          setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.innerHTML = `
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              Copy
+            `;
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy:', err);
+        }
+      });
+    });
+
+    // Update code on any setting change
+    const updateTriggers = [
+      'input[name="mode"]', 'input[name="timingMode"]', 'input[name="boardBg"]',
+      '#boardFont', '#mathTime', '#otherTime', '#firstWordColor', '#variableColor',
+      '#fixedPhrase', '#fixedColor'
+    ];
+    
+    updateTriggers.forEach(selector => {
+      document.querySelectorAll(selector).forEach(el => {
+        el.addEventListener('change', updateCodeSnippets);
+        el.addEventListener('input', updateCodeSnippets);
+      });
+    });
+
+    // Initial code generation
+    updateCodeSnippets();
   </script>
 </body>
 
