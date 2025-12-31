@@ -8,8 +8,8 @@ class WordRotator {
       this.words = ["Math"] // Fallback if all words were empty
     }
     this.mode = config.mode || "wheel"
-    this.mathInterval = config.mathInterval || 3000
-    this.otherInterval = config.otherInterval || 500
+    this.firstWordInterval = config.firstWordInterval || 3000
+    this.otherWordInterval = config.otherWordInterval || 500
     this.timingMode = config.timingMode || "pause" // "fixed" = interval from start, "pause" = wait after animation
     this.onRotate = config.onRotate || null
     this.onLetterLand = config.onLetterLand || null // Called when each letter lands on final value
@@ -205,8 +205,8 @@ class WordRotator {
       clearTimeout(this.timeoutId)
     }
 
-    // Determine interval based on current word (first word gets mathInterval)
-    const interval = this.currentIndex === 0 ? this.mathInterval : this.otherInterval
+    // Determine interval based on current word (first word gets firstWordInterval)
+    const interval = this.currentIndex === 0 ? this.firstWordInterval : this.otherWordInterval
 
     this.timeoutId = setTimeout(() => {
       this.rotateToNext()
@@ -458,9 +458,9 @@ class WordRotator {
     this.init()
   }
 
-  setIntervals(mathInterval, otherInterval) {
-    this.mathInterval = mathInterval
-    this.otherInterval = otherInterval
+  setIntervals(firstWordInterval, otherWordInterval) {
+    this.firstWordInterval = firstWordInterval
+    this.otherWordInterval = otherWordInterval
   }
 
   setTimingMode(mode) {
