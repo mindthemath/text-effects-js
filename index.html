@@ -100,8 +100,24 @@
                 <input type="range" id="mathTime" min="1000" max="8000" value="3000" step="500">
               </label>
             </div>
-            <div class="color-input-group" style="flex: 0 0 auto; width: 100px;">
-              <input type="color" id="firstWordColor" class="color-input" value="#ff0000">
+            <div class="color-input-group" style="flex: 0 0 auto; width: 220px;">
+              <label class="slider-label" style="font-size: 0.75rem; margin-bottom: 0.35rem; display: block;">
+                Accent (OKLCH / P3)
+              </label>
+              <input
+                type="text"
+                id="firstWordColor"
+                class="text-input"
+                value="oklch(0.9278 0.2508 121.21)"
+                placeholder="e.g. oklch(0.9278 0.2508 121.21) or color(display-p3 1 1 0)"
+                style="width: 100%;"
+              >
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+                <input type="color" id="firstWordColorSrgb" class="color-input" value="#ffd71c" title="sRGB fallback (hex)">
+                <a id="oklchPickerLink" href="https://oklch.com/#0.9278,0.2508,121.21,100" target="_blank" rel="noopener noreferrer" style="font-size: 0.75rem; color: #0066cc;">
+                  OKLCH picker
+                </a>
+              </div>
             </div>
           </div>
           <div style="display: flex; gap: 1rem; align-items: flex-end;">
@@ -400,10 +416,51 @@ Education</textarea>
 
     // Handle first word color
     const firstWordColorInput = document.getElementById('firstWordColor');
+    const firstWordColorSrgbInput = document.getElementById('firstWordColorSrgb');
+
+    // OKLCH / wide-gamut support helpers
+    const supportsCssColor = (value) => {
+      try {
+        return typeof CSS !== 'undefined' && typeof CSS.supports === 'function' && CSS.supports('color', value);
+      } catch (_) {
+        return false;
+      }
+    };
+
+    const getFirstWordColor = () => {
+      const candidate = (firstWordColorInput?.value || '').trim();
+      if (candidate && supportsCssColor(candidate)) return candidate;
+      return firstWordColorSrgbInput?.value || '#ffd71c';
+    };
+
+    // Update OKLCH picker link with current color
+    const updateOklchPickerLink = () => {
+      const oklchPickerLink = document.getElementById('oklchPickerLink');
+      if (!oklchPickerLink) return;
+
+      const colorValue = (firstWordColorInput?.value || '').trim();
+      
+      // Parse OKLCH format: oklch(L% C H) or oklch(L C H)
+      const oklchMatch = colorValue.match(/oklch\s*\(\s*([\d.]+)%?\s+([\d.]+)\s+([\d.]+)\s*(?:\/\s*([\d.]+))?\s*\)/i);
+      
+      if (oklchMatch) {
+        let lightness = parseFloat(oklchMatch[1]);
+        // Convert percentage to 0-1 if needed
+        if (lightness > 1) lightness = lightness / 100;
+        const chroma = parseFloat(oklchMatch[2]);
+        const hue = parseFloat(oklchMatch[3]);
+        const alpha = oklchMatch[4] ? parseFloat(oklchMatch[4]) * 100 : 100; // Convert 0-1 to 0-100
+        
+        oklchPickerLink.href = `https://oklch.com/#${lightness},${chroma},${hue},${alpha}`;
+      } else {
+        // Default to current default color if parsing fails
+        oklchPickerLink.href = 'https://oklch.com/#0.95,0.32,105,100';
+      }
+    };
     
     // Function to apply color to a specific letter flap (for flip mode)
     const applyLetterColor = (letterIndex, isFirstWord) => {
-      const firstColor = firstWordColorInput.value;
+      const firstColor = getFirstWordColor();
       const otherColor = variableColorInput.value;
       const color = isFirstWord ? firstColor : otherColor;
       
@@ -420,7 +477,7 @@ Education</textarea>
     
     // Function to apply variable color to all word elements (except first)
     const applyVariableColor = (isFinished = true) => {
-      const firstColor = firstWordColorInput.value;
+      const firstColor = getFirstWordColor();
       const otherColor = variableColorInput.value;
 
       // For Wheel Mode
@@ -460,11 +517,19 @@ Education</textarea>
     
     firstWordColorInput.addEventListener('input', (e) => {
       applyFirstWordColor();
+      updateOklchPickerLink();
+    });
+    firstWordColorSrgbInput.addEventListener('input', (e) => {
+      // Keep the text field in sync (still valid CSS) so exports work as expected.
+      firstWordColorInput.value = e.target.value;
+      applyFirstWordColor();
+      updateOklchPickerLink();
     });
 
     // Set initial colors
     staticTextElement.style.color = fixedColorInput.value;
     applyVariableColor();
+    updateOklchPickerLink(); // Initialize OKLCH picker link
     
     // Apply initial font if in flip mode
     if (rotator.mode === 'flip') {
@@ -510,7 +575,9 @@ Education</textarea>
       const boardFont = document.getElementById('boardFont')?.value || "'Source Code Pro', monospace";
       const mathTime = parseInt(document.getElementById('mathTime')?.value || 3000);
       const otherTime = parseInt(document.getElementById('otherTime')?.value || 500);
-      const firstWordColor = document.getElementById('firstWordColor')?.value || '#ff0000';
+      const firstWordColorRaw = (document.getElementById('firstWordColor')?.value || '').trim();
+      const firstWordColorFallback = document.getElementById('firstWordColorSrgb')?.value || '#ffd71c';
+      const firstWordColor = (firstWordColorRaw && supportsCssColor(firstWordColorRaw)) ? firstWordColorRaw : firstWordColorFallback;
       const otherColor = document.getElementById('variableColor')?.value || '#666666';
       const fixedPhrase = document.getElementById('fixedPhrase')?.value || 'Mind the';
       const fixedColor = document.getElementById('fixedColor')?.value || '#1a1a1a';
@@ -642,7 +709,7 @@ ${generateJsSnippet(config)}
     // Update code on any setting change
     const updateTriggers = [
       'input[name="mode"]', 'input[name="timingMode"]', 'input[name="boardBg"]',
-      '#boardFont', '#mathTime', '#otherTime', '#firstWordColor', '#variableColor',
+      '#boardFont', '#mathTime', '#otherTime', '#firstWordColor', '#firstWordColorSrgb', '#variableColor',
       '#fixedPhrase', '#fixedColor'
     ];
     
