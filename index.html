@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word Rotator Demo</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="hero-container">
+    <h1 class="hero-text">
+      <span class="static-text">Mind the</span>
+      <span class="word-rotator" id="wordRotator">
+        <span class="word active">Math</span>
+      </span>
+    </h1>
+
+    <!-- Added comprehensive configuration controls -->
+    <div class="demo-controls">
+      <div class="control-section">
+        <h3>Mode</h3>
+        <div class="control-group">
+          <label class="radio-label">
+            <input type="radio" name="mode" value="wheel" checked>
+            <span>Wheel</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="mode" value="flip">
+            <span>Flip</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="control-section">
+        <h3>Timing</h3>
+        <div class="control-group vertical">
+          <div style="display: flex; gap: 1rem; align-items: flex-end;">
+            <div style="flex: 1;">
+              <label class="slider-label">
+                First word: <span id="mathTimeValue">3.0s</span>
+                <input type="range" id="mathTime" min="1000" max="8000" value="3000" step="500">
+              </label>
+            </div>
+            <div class="color-input-group" style="flex: 0 0 auto; width: 100px;">
+              <input type="color" id="firstWordColor" class="color-input" value="#1a1a1a">
+            </div>
+          </div>
+          <div style="display: flex; gap: 1rem; align-items: flex-end;">
+            <div style="flex: 1;">
+              <label class="slider-label">
+                Other: <span id="otherTimeValue">2.0s</span>
+                <input type="range" id="otherTime" min="500" max="5000" value="2000" step="500">
+              </label>
+            </div>
+            <div class="color-input-group" style="flex: 0 0 auto; width: 100px;">
+              <input type="color" id="variableColor" class="color-input" value="#666666">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="control-section">
+        <h3>Text</h3>
+        <div class="control-group vertical">
+          <div style="display: flex; gap: 1rem; align-items: flex-end;">
+            <div style="flex: 1;">
+              <label class="slider-label">
+                Fixed phrase:
+                <input type="text" id="fixedPhrase" class="text-input" value="Mind the" placeholder="Enter fixed phrase">
+              </label>
+            </div>
+            <div class="color-input-group" style="flex: 0 0 auto; width: 100px;">
+              <input type="color" id="fixedColor" class="color-input" value="#1a1a1a">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="control-section">
+        <label class="slider-label" style="margin-bottom: 0.5rem; display: block;">Words</label>
+        <div class="control-group vertical">
+          <textarea id="wordList" rows="4" placeholder="Enter words, one per line">
+Math
+Art
+Engineering
+Computation
+Design
+Education</textarea>
+          <button id="updateWords" class="btn-primary">Update</button>
+          <button id="resetWords" class="btn-secondary">Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="word-rotator.js"></script>
+  <script>
+    // Parse initial words from textarea
+    const wordListTextarea = document.getElementById('wordList');
+    const initialWords = wordListTextarea.value
+      .split('\n')
+      .map(w => w.trim())
+      .filter(w => w.length > 0);
+
+    // Initialize the word rotator
+    const rotator = new WordRotator({
+      elementId: 'wordRotator',
+      words: initialWords,
+      mode: 'wheel',
+      mathInterval: 3000,
+      otherInterval: 2000,
+    });
+
+    // Handle mode switching
+    document.querySelectorAll('input[name="mode"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        rotator.setMode(e.target.value);
+      });
+    });
+
+    // Handle timing controls
+    const mathTimeSlider = document.getElementById('mathTime');
+    const otherTimeSlider = document.getElementById('otherTime');
+    const mathTimeValue = document.getElementById('mathTimeValue');
+    const otherTimeValue = document.getElementById('otherTimeValue');
+
+    mathTimeSlider.addEventListener('input', (e) => {
+      const value = parseInt(e.target.value);
+      mathTimeValue.textContent = (value / 1000).toFixed(1) + 's';
+      rotator.setIntervals(value, parseInt(otherTimeSlider.value));
+    });
+
+    otherTimeSlider.addEventListener('input', (e) => {
+      const value = parseInt(e.target.value);
+      otherTimeValue.textContent = (value / 1000).toFixed(1) + 's';
+      rotator.setIntervals(parseInt(mathTimeSlider.value), value);
+    });
+
+    // Handle word list updates
+    const updateWordsBtn = document.getElementById('updateWords');
+    const resetWordsBtn = document.getElementById('resetWords');
+
+    updateWordsBtn.addEventListener('click', () => {
+      const words = wordListTextarea.value
+        .split('\n')
+        .map(w => w.trim())
+        .filter(w => w.length > 0);
+
+      if (words.length > 0) {
+        rotator.setWords(words);
+      } else {
+        alert('Please enter at least one word');
+      }
+    });
+
+    resetWordsBtn.addEventListener('click', () => {
+      wordListTextarea.value = 'Math\nArt\nEngineering\nComputation\nDesign\nEducation';
+      rotator.setWords(['Math', 'Art', 'Engineering', 'Computation', 'Design', 'Education']);
+    });
+
+    // Handle fixed phrase updates
+    const fixedPhraseInput = document.getElementById('fixedPhrase');
+    const staticTextElement = document.querySelector('.static-text');
+
+    fixedPhraseInput.addEventListener('input', (e) => {
+      staticTextElement.textContent = e.target.value || 'Mind the';
+    });
+
+    // Handle color updates
+    const fixedColorInput = document.getElementById('fixedColor');
+    const variableColorInput = document.getElementById('variableColor');
+
+    // Handle first word color
+    const firstWordColorInput = document.getElementById('firstWordColor');
+    
+    // Function to apply variable color to all word elements (except first)
+    const applyVariableColor = () => {
+      const wordElements = document.querySelectorAll('.word');
+      wordElements.forEach((word, index) => {
+        // First word (index 0) gets its own color, others get variable color
+        if (index === 0) {
+          word.style.color = firstWordColorInput.value;
+        } else {
+          word.style.color = variableColorInput.value;
+        }
+      });
+    };
+    
+    // Function to apply first word color
+    const applyFirstWordColor = () => {
+      const wordElements = document.querySelectorAll('.word');
+      if (wordElements.length > 0) {
+        wordElements[0].style.color = firstWordColorInput.value;
+      }
+    };
+
+    fixedColorInput.addEventListener('input', (e) => {
+      staticTextElement.style.color = e.target.value;
+    });
+
+    variableColorInput.addEventListener('input', (e) => {
+      applyVariableColor();
+    });
+    
+    firstWordColorInput.addEventListener('input', (e) => {
+      applyFirstWordColor();
+    });
+
+    // Set initial colors
+    staticTextElement.style.color = fixedColorInput.value;
+    applyVariableColor();
+
+    // Reapply color when words are updated
+    const originalSetWords = rotator.setWords.bind(rotator);
+    rotator.setWords = function (newWords) {
+      originalSetWords(newWords);
+      // Wait for DOM update, then apply colors
+      setTimeout(() => {
+        applyVariableColor();
+      }, 0);
+    };
+  </script>
+</body>
+
+</html>

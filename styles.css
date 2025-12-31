@@ -1,0 +1,486 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  padding: 2rem 1rem;
+}
+
+.hero-container {
+  text-align: left;
+  max-width: 900px;
+  width: 100%;
+}
+
+.hero-text {
+  font-size: clamp(2rem, 8vw, 5rem);
+  font-weight: 700;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  flex-wrap: nowrap; /* Prevent wrapping to a new line */
+  margin-bottom: 3rem;
+}
+
+.static-text {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.word-rotator {
+  position: relative;
+  display: inline-block;
+  min-width: 200px;
+  height: 1.2em;
+  perspective: 1000px;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: middle; /* Align with static text */
+}
+
+.word {
+  position: absolute;
+  left: 0;
+  right: 0;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: none;
+  color: #666666;
+  font-weight: 800;
+}
+
+.word.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Wheel Mode Animations - Continuous slots rotation */
+.word-rotator[data-mode="wheel"] {
+  overflow: hidden;
+}
+
+.word-rotator[data-mode="wheel"] .word {
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+
+.word-rotator[data-mode="wheel"] .word.active {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.word-rotator[data-mode="wheel"] .word.exiting {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+.word-rotator[data-mode="wheel"] .word.entering {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+/* Flip Card Mode Animations - Mid-Century Airport Style */
+.word-rotator[data-mode="flip"] {
+  perspective: 2000px;
+  overflow: visible;
+  height: 1.2em; /* Keep height consistent with wheel mode and text */
+  vertical-align: middle;
+}
+
+.flap-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #1a1a1a;
+  border-radius: 4px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  color: #fff;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 900;
+  text-transform: uppercase;
+  border: 1px solid #333;
+}
+
+.flap {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  overflow: hidden;
+  background: #1a1a1a;
+}
+
+.top-static {
+  top: 0;
+  border-radius: 4px 4px 0 0;
+  z-index: 1;
+}
+
+.bottom-static {
+  bottom: 0;
+  border-radius: 0 0 4px 4px;
+  z-index: 0;
+}
+
+.flap-leaf {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  z-index: 5;
+  transform-origin: bottom;
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.flap-leaf.flipping {
+  transform: rotateX(-180deg);
+}
+
+.flap-leaf-front, .flap-leaf-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #1a1a1a;
+  backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.flap-leaf-front {
+  border-radius: 4px 4px 0 0;
+  z-index: 2;
+}
+
+.flap-leaf-back {
+  transform: rotateX(-180deg);
+  border-radius: 0 0 4px 4px;
+  z-index: 1;
+}
+
+/* Content positioning to create the split effect */
+.flap-content {
+  position: absolute;
+  width: 100%;
+  height: 200%; /* Total container height */
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-left: 15px;
+  font-size: 0.9em; /* Closer to hero text scale */
+  letter-spacing: 0.05em;
+  color: #f0f0f0;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+  line-height: 1;
+}
+
+/* Top halves show the top of the word */
+.top-static .flap-content,
+.flap-leaf-front .flap-content {
+  top: 0;
+}
+
+/* Bottom halves show the bottom of the word */
+.bottom-static .flap-content,
+.flap-leaf-back .flap-content {
+  bottom: 0;
+}
+
+/* Add a subtle gradient to flaps for more realism */
+.flap, .flap-leaf-front, .flap-leaf-back {
+  background: linear-gradient(to bottom, #2a2a2a 0%, #1a1a1a 100%);
+}
+
+/* Central dividing line and shadow */
+.flap-container::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #000;
+  z-index: 20;
+  transform: translateY(-50%);
+  box-shadow: 0 1px 1px rgba(255,255,255,0.1);
+}
+
+/* Controls */
+.demo-controls {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 2rem;
+  margin-top: 3rem;
+}
+
+.control-section {
+  margin-bottom: 2rem;
+}
+
+.control-section:last-child {
+  margin-bottom: 0;
+}
+
+.control-section h3 {
+  color: #333;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.control-group {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.control-group.vertical {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.radio-label {
+  color: #333;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  background: #f5f5f5;
+  border-radius: 2px;
+  transition: background 0.2s ease;
+  border: 1px solid #e0e0e0;
+}
+
+.radio-label:hover {
+  background: #ebebeb;
+}
+
+.radio-label input[type="radio"]:checked + span {
+  font-weight: 600;
+}
+
+.radio-label input[type="radio"]:checked {
+  accent-color: #666;
+}
+
+.radio-label input[type="radio"] {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+}
+
+.slider-label {
+  color: #333;
+  font-size: 0.875rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.slider-label span {
+  font-weight: 600;
+  color: #666;
+}
+
+.slider-label input[type="range"] {
+  width: 100%;
+  height: 2px;
+  border-radius: 1px;
+  background: #d0d0d0;
+  outline: none;
+  cursor: pointer;
+}
+
+.slider-label input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #333;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+  border: 1px solid #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.slider-label input[type="range"]::-webkit-slider-thumb:hover {
+  background: #1a1a1a;
+  transform: scale(1.1);
+}
+
+.slider-label input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #333;
+  cursor: pointer;
+  border: 1px solid #fff;
+  transition: background 0.15s ease, transform 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.slider-label input[type="range"]::-moz-range-thumb:hover {
+  background: #1a1a1a;
+  transform: scale(1.1);
+}
+
+#wordList {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 2px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.875rem;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s ease;
+  background: #fff;
+  color: #333;
+}
+
+#wordList:focus {
+  border-color: #999;
+}
+
+.text-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 2px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+  background: #fff;
+  color: #333;
+}
+
+.text-input:focus {
+  border-color: #999;
+}
+
+.color-control {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.color-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.color-input-group label {
+  font-size: 0.75rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.color-input {
+  width: 100%;
+  height: 32px;
+  border: 1px solid #e0e0e0;
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.color-input:hover {
+  border-color: #999;
+}
+
+.color-input::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.color-input::-webkit-color-swatch {
+  border: none;
+  border-radius: 1px;
+}
+
+.color-input::-moz-color-swatch {
+  border: none;
+  border-radius: 1px;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 0.5rem 1rem;
+  border: 1px solid #999;
+  border-radius: 2px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.btn-primary {
+  background: #333;
+  color: #fff;
+  border-color: #333;
+}
+
+.btn-primary:hover {
+  background: #1a1a1a;
+  border-color: #1a1a1a;
+}
+
+.btn-secondary {
+  background: #fff;
+  color: #333;
+  border-color: #999;
+}
+
+.btn-secondary:hover {
+  background: #f5f5f5;
+  border-color: #666;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .hero-text {
+    font-size: 2.5rem;
+  }
+
+  .word-rotator {
+    min-width: 150px;
+  }
+
+  .demo-controls {
+    padding: 1.5rem;
+  }
+
+  .control-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .radio-label {
+    justify-content: center;
+  }
+}
