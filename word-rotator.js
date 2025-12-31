@@ -5,10 +5,17 @@ class WordRotator {
     this.mode = config.mode || "wheel"
     this.mathInterval = config.mathInterval || 3000
     this.otherInterval = config.otherInterval || 500
+    this.timingMode = config.timingMode || "pause" // "fixed" = interval from start, "pause" = wait after animation
     this.onRotate = config.onRotate || null
+    this.onLetterLand = config.onLetterLand || null // Called when each letter lands on final value
 
     this.currentIndex = 0
     this.timeoutId = null
+    this.lettersLanded = 0 // Track how many letters have finished animating
+    this.totalLettersToAnimate = 0
+    
+    // Character set for split-flap display (space + alphabet)
+    this.charSet = " ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
     this.init()
   }
@@ -47,8 +54,19 @@ class WordRotator {
   }
 
   setupFlipLayout() {
-    this.element.innerHTML = `
-      <div class="flap-container">
+    // Find the max word length to determine number of letter slots
+    this.maxWordLength = Math.max(...this.words.map(w => w.length))
+    
+    // Create the board container
+    const boardContainer = document.createElement("div")
+    boardContainer.className = "flip-board"
+    
+    // Create individual letter flaps
+    this.letterFlaps = []
+    for (let i = 0; i < this.maxWordLength; i++) {
+      const letterContainer = document.createElement("div")
+      letterContainer.className = "letter-flap"
+      letterContainer.innerHTML = `
         <div class="flap top-static">
           <div class="flap-content"></div>
         </div>
@@ -63,27 +81,39 @@ class WordRotator {
             <div class="flap-content"></div>
           </div>
         </div>
-      </div>
-    `
+      `
+      boardContainer.appendChild(letterContainer)
+      
+      this.letterFlaps.push({
+        container: letterContainer,
+        topStatic: letterContainer.querySelector(".top-static .flap-content"),
+        bottomStatic: letterContainer.querySelector(".bottom-static .flap-content"),
+        leafFront: letterContainer.querySelector(".flap-leaf-front .flap-content"),
+        leafBack: letterContainer.querySelector(".flap-leaf-back .flap-content"),
+        leaf: letterContainer.querySelector(".flap-leaf")
+      })
+    }
     
-    this.flapTop = this.element.querySelector(".top-static .flap-content")
-    this.flapBottom = this.element.querySelector(".bottom-static .flap-content")
-    this.flapLeafFront = this.element.querySelector(".flap-leaf-front .flap-content")
-    this.flapLeafBack = this.element.querySelector(".flap-leaf-back .flap-content")
-    this.flapLeaf = this.element.querySelector(".flap-leaf")
-
-    const currentWord = this.words[this.currentIndex]
-    this.updateFlapContents(currentWord, currentWord)
+    this.element.appendChild(boardContainer)
+    
+    // Set initial letters
+    const currentWord = this.words[this.currentIndex].toUpperCase().padEnd(this.maxWordLength, " ")
+    this.currentLetters = currentWord.split("")
+    
+    this.letterFlaps.forEach((flap, i) => {
+      const letter = currentWord[i] || " "
+      this.setLetterContent(flap, letter, letter)
+    })
     
     // Set initial width
     this.updateContainerWidth()
   }
 
-  updateFlapContents(currentWord, nextWord) {
-    this.flapTop.textContent = nextWord
-    this.flapBottom.textContent = currentWord
-    this.flapLeafFront.textContent = currentWord
-    this.flapLeafBack.textContent = nextWord
+  setLetterContent(flap, currentLetter, nextLetter) {
+    flap.topStatic.textContent = nextLetter
+    flap.bottomStatic.textContent = currentLetter
+    flap.leafFront.textContent = currentLetter
+    flap.leafBack.textContent = nextLetter
   }
 
   setupWheelLayout() {
@@ -107,26 +137,22 @@ class WordRotator {
   }
 
   updateContainerWidth() {
-    // Temporarily measure longest word
+    if (this.mode === "flip") {
+      // For flip mode, width is determined by number of letter flaps
+      // Each letter flap is 0.7em wide plus 3px gap, plus board padding
+      // Let CSS handle it - just set auto width
+      this.element.style.width = "auto"
+      return
+    }
+    
+    // For wheel mode, measure longest word
     const tempMeasure = document.createElement("span")
     tempMeasure.style.position = "absolute"
     tempMeasure.style.visibility = "hidden"
     tempMeasure.style.whiteSpace = "nowrap"
     tempMeasure.style.fontSize = window.getComputedStyle(this.element).fontSize
     tempMeasure.style.fontWeight = "900"
-    
-    // Use appropriate font for measurement based on mode
-    if (this.mode === "flip") {
-      // Get the actual font from the flap-container if it exists, otherwise use default
-      const flapContainer = this.element.querySelector(".flap-container")
-      if (flapContainer) {
-        tempMeasure.style.fontFamily = window.getComputedStyle(flapContainer).fontFamily
-      } else {
-        tempMeasure.style.fontFamily = "'JetBrains Mono', monospace"
-      }
-    } else {
-      tempMeasure.style.fontFamily = window.getComputedStyle(this.element).fontFamily
-    }
+    tempMeasure.style.fontFamily = window.getComputedStyle(this.element).fontFamily
     tempMeasure.style.textTransform = "uppercase"
     document.body.appendChild(tempMeasure)
 
@@ -141,16 +167,10 @@ class WordRotator {
 
     document.body.removeChild(tempMeasure)
 
-    // Set container width - more generous padding for flip mode to accommodate longer words
-    const padding = this.mode === "flip" ? 100 : 60
-    const minWidth = this.mode === "flip" ? 280 : 240
+    const padding = 60
+    const minWidth = 240
     const finalWidth = Math.max(maxWidth + padding, minWidth) 
     this.element.style.width = `${finalWidth}px`
-    
-    if (this.mode === "flip") {
-      const container = this.element.querySelector(".flap-container")
-      if (container) container.style.width = "100%"
-    }
   }
 
   startRotation() {
@@ -222,39 +242,143 @@ class WordRotator {
   }
 
   rotateFlip() {
-    const currentWord = this.words[this.currentIndex]
+    const prevIndex = this.currentIndex
+    const currentWord = this.words[this.currentIndex].toUpperCase().padEnd(this.maxWordLength, " ")
     this.currentIndex = (this.currentIndex + 1) % this.words.length
-    const nextWord = this.words[this.currentIndex]
+    const nextWord = this.words[this.currentIndex].toUpperCase().padEnd(this.maxWordLength, " ")
+    const nextIndex = this.currentIndex
 
-    // Prepare contents for the animation
-    this.updateFlapContents(currentWord, nextWord)
-
-    // Reset leaf position without transition
-    this.flapLeaf.style.transition = "none"
-    this.flapLeaf.classList.remove("flipping")
-    
-    // Force reflow
-    void this.flapLeaf.offsetWidth
-
-    // Start animation with a mechanical feel
-    this.flapLeaf.style.transition = "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
-    this.flapLeaf.classList.add("flipping")
+    const currentLetters = currentWord.split("")
+    const nextLetters = nextWord.split("")
 
     if (this.onRotate) this.onRotate(this.currentIndex, false)
 
+    // Reset letter tracking for "pause" timing mode
+    this.lettersLanded = 0
+    this.totalLettersToAnimate = this.letterFlaps.length
+
+    // Cascade through each letter with a delay
+    const cascadeDelay = 40 // ms between each letter position starting
+    const flipSpeed = 35 // ms per individual flip through the rolodex
+
+    this.letterFlaps.forEach((flap, i) => {
+      const fromLetter = currentLetters[i] || " "
+      const toLetter = nextLetters[i] || " "
+
+      // Delay start of each letter's cascade
+      setTimeout(() => {
+        this.cycleLetterToTarget(flap, i, fromLetter, toLetter, flipSpeed, nextIndex)
+      }, i * cascadeDelay)
+    })
+
+    // In "fixed" mode, schedule next rotation immediately (based on interval from now)
+    // In "pause" mode, wait until all letters land, then schedule (handled in onLetterComplete)
+    if (this.timingMode === "fixed") {
+      this.startRotation()
+    }
+  }
+
+  // Called when a letter completes its full animation cycle
+  onLetterComplete() {
+    this.lettersLanded++
+    
+    // In "pause" mode, schedule next rotation only after ALL letters have landed
+    if (this.timingMode === "pause" && this.lettersLanded >= this.totalLettersToAnimate) {
+      if (this.onRotate) this.onRotate(this.currentIndex, true)
+      this.startRotation()
+    }
+  }
+
+  // Get number of flips needed to go from one char to another (always forward in rolodex)
+  getFlipCount(fromChar, toChar) {
+    const fromIdx = this.charSet.indexOf(fromChar)
+    const toIdx = this.charSet.indexOf(toChar)
+    
+    if (fromIdx === -1 || toIdx === -1) return 1 // Fallback for unknown chars
+    if (fromIdx === toIdx) return 0
+    
+    // Always cycle forward (like a real rolodex)
+    if (toIdx > fromIdx) {
+      return toIdx - fromIdx
+    } else {
+      // Wrap around: go from current to end, then from start to target
+      return (this.charSet.length - fromIdx) + toIdx
+    }
+  }
+
+  // Get the next character in the rolodex
+  getNextChar(char) {
+    const idx = this.charSet.indexOf(char)
+    if (idx === -1) return char
+    return this.charSet[(idx + 1) % this.charSet.length]
+  }
+
+  // Cycle a letter through all intermediate characters to reach the target
+  cycleLetterToTarget(flap, letterIndex, fromLetter, toLetter, flipSpeed, wordIndex) {
+    const flipCount = this.getFlipCount(fromLetter, toLetter)
+    
+    if (flipCount === 0) {
+      // No change needed, but still notify that this letter is "landed"
+      if (this.onLetterLand) {
+        this.onLetterLand(letterIndex, toLetter, wordIndex)
+      }
+      this.onLetterComplete() // Still counts as complete for timing purposes
+      return
+    }
+
+    let currentChar = fromLetter
+    let flipsRemaining = flipCount
+
+    const doOneFlip = () => {
+      const nextChar = this.getNextChar(currentChar)
+      flipsRemaining--
+      const isFinal = flipsRemaining === 0
+
+      this.performSingleFlip(flap, currentChar, nextChar, flipSpeed, () => {
+        currentChar = nextChar
+        
+        if (isFinal) {
+          // This letter has landed on its final value
+          if (this.onLetterLand) {
+            this.onLetterLand(letterIndex, toLetter, wordIndex)
+          }
+          this.onLetterComplete() // Notify that this letter is done animating
+        } else {
+          // Continue to next flip
+          doOneFlip()
+        }
+      })
+    }
+
+    doOneFlip()
+  }
+
+  // Perform a single flip animation
+  performSingleFlip(flap, fromChar, toChar, duration, onComplete) {
+    // Set up the flip content
+    this.setLetterContent(flap, fromChar, toChar)
+
+    // Reset leaf position without transition
+    flap.leaf.style.transition = "none"
+    flap.leaf.classList.remove("flipping")
+    
+    // Force reflow
+    void flap.leaf.offsetWidth
+
+    // Start animation
+    flap.leaf.style.transition = `transform ${duration}ms linear`
+    flap.leaf.classList.add("flipping")
+
     // After animation finish, sync the states
     setTimeout(() => {
-      this.flapBottom.textContent = nextWord
-      this.flapLeafFront.textContent = nextWord // Update leaf front to next word for rest state
+      flap.bottomStatic.textContent = toChar
+      flap.leafFront.textContent = toChar
       
-      this.flapLeaf.style.transition = "none"
-      this.flapLeaf.classList.remove("flipping")
-
-      if (this.onRotate) this.onRotate(this.currentIndex, true)
-    }, 450)
-
-    // Schedule next rotation
-    this.startRotation()
+      flap.leaf.style.transition = "none"
+      flap.leaf.classList.remove("flipping")
+      
+      if (onComplete) onComplete()
+    }, duration)
   }
 
   setMode(newMode) {
@@ -281,6 +405,10 @@ class WordRotator {
   setIntervals(mathInterval, otherInterval) {
     this.mathInterval = mathInterval
     this.otherInterval = otherInterval
+  }
+
+  setTimingMode(mode) {
+    this.timingMode = mode // "fixed" or "pause"
   }
 
   destroy() {

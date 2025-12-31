@@ -27,11 +27,11 @@
         <h3>Mode</h3>
         <div class="control-group">
           <label class="radio-label">
-            <input type="radio" name="mode" value="wheel" checked>
+            <input type="radio" name="mode" value="wheel">
             <span>Wheel</span>
           </label>
           <label class="radio-label">
-            <input type="radio" name="mode" value="flip">
+            <input type="radio" name="mode" value="flip" checked>
             <span>Flip</span>
           </label>
         </div>
@@ -81,6 +81,16 @@
 
       <div class="control-section">
         <h3>Timing</h3>
+        <div class="control-group" id="timingModeControl" style="margin-bottom: 1rem; display: none;">
+          <label class="radio-label">
+            <input type="radio" name="timingMode" value="fixed">
+            <span>Fixed Interval</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="timingMode" value="pause" checked>
+            <span>Pause After</span>
+          </label>
+        </div>
         <div class="control-group vertical">
           <div style="display: flex; gap: 1rem; align-items: flex-end;">
             <div style="flex: 1;">
@@ -96,7 +106,7 @@
           <div style="display: flex; gap: 1rem; align-items: flex-end;">
             <div style="flex: 1;">
               <label class="slider-label">
-                Other: <span id="otherTimeValue">0.5s</span>
+                <span id="otherTimeLabel">Other:</span> <span id="otherTimeValue">0.5s</span>
                 <input type="range" id="otherTime" min="500" max="5000" value="500" step="500">
               </label>
             </div>
@@ -154,26 +164,40 @@ Education</textarea>
     const rotator = new WordRotator({
       elementId: 'wordRotator',
       words: initialWords,
-      mode: 'wheel',
+      mode: 'flip',
       mathInterval: 3000,
       otherInterval: 500,
       onRotate: (index, isFinished) => {
-        applyVariableColor(isFinished);
+        // For wheel mode, apply colors on rotation
+        if (rotator.mode === 'wheel') {
+          applyVariableColor(isFinished);
+        }
+      },
+      onLetterLand: (letterIndex, letter, wordIndex) => {
+        // For flip mode: color each letter when it lands on its final value
+        // Only the first word (index 0) gets the accent color
+        applyLetterColor(letterIndex, wordIndex === 0);
       }
     });
 
     // Handle mode switching
     const boardBgControl = document.getElementById('boardBackgroundControl');
     const boardFontControl = document.getElementById('boardFontControl');
+    const timingModeControl = document.getElementById('timingModeControl');
+    const otherTimeLabel = document.getElementById('otherTimeLabel');
+    
     // Initial state check
-    boardBgControl.style.display = rotator.mode === 'flip' ? 'block' : 'none';
-    boardFontControl.style.display = rotator.mode === 'flip' ? 'block' : 'none';
+    const updateFlipModeControls = (isFlip) => {
+      boardBgControl.style.display = isFlip ? 'block' : 'none';
+      boardFontControl.style.display = isFlip ? 'block' : 'none';
+      timingModeControl.style.display = isFlip ? 'flex' : 'none';
+    };
+    updateFlipModeControls(rotator.mode === 'flip');
 
     document.querySelectorAll('input[name="mode"]').forEach(radio => {
       radio.addEventListener('change', (e) => {
         rotator.setMode(e.target.value);
-        boardBgControl.style.display = e.target.value === 'flip' ? 'block' : 'none';
-        boardFontControl.style.display = e.target.value === 'flip' ? 'block' : 'none';
+        updateFlipModeControls(e.target.value === 'flip');
         // Reapply colors and font after mode change
         setTimeout(() => {
           applyVariableColor(true);
@@ -181,6 +205,25 @@ Education</textarea>
             applyBoardFont();
           }
         }, 0);
+      });
+    });
+
+    // Handle timing mode switching
+    const updateTimingModeLabel = (mode) => {
+      if (mode === 'pause') {
+        otherTimeLabel.textContent = 'Pause after:';
+      } else {
+        otherTimeLabel.textContent = 'Other:';
+      }
+    };
+
+    // Initialize label based on default timing mode
+    updateTimingModeLabel(rotator.timingMode);
+
+    document.querySelectorAll('input[name="timingMode"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        rotator.setTimingMode(e.target.value);
+        updateTimingModeLabel(e.target.value);
       });
     });
 
@@ -197,14 +240,14 @@ Education</textarea>
     let currentBoardFont = boardFontSelect.value; // Store current selection
     
     const applyBoardFont = () => {
-      const flapContainer = document.querySelector('.flap-container');
+      const letterFlaps = document.querySelectorAll('.letter-flap');
       const flapContents = document.querySelectorAll('.flap-content');
       const staticTextElement = document.querySelector('.static-text');
       
       // Apply to board elements
-      if (flapContainer) {
-        flapContainer.style.fontFamily = currentBoardFont;
-      }
+      letterFlaps.forEach(flap => {
+        flap.style.fontFamily = currentBoardFont;
+      });
       flapContents.forEach(content => {
         content.style.fontFamily = currentBoardFont;
       });
@@ -212,11 +255,6 @@ Education</textarea>
       // Apply to fixed phrase as well
       if (staticTextElement) {
         staticTextElement.style.fontFamily = currentBoardFont;
-      }
-      
-      // Recalculate width with new font
-      if (rotator.mode === 'flip') {
-        rotator.updateContainerWidth();
       }
     };
     
@@ -281,6 +319,23 @@ Education</textarea>
     // Handle first word color
     const firstWordColorInput = document.getElementById('firstWordColor');
     
+    // Function to apply color to a specific letter flap (for flip mode)
+    const applyLetterColor = (letterIndex, isFirstWord) => {
+      const firstColor = firstWordColorInput.value;
+      const otherColor = variableColorInput.value;
+      const color = isFirstWord ? firstColor : otherColor;
+      
+      // Get the specific letter flap
+      const letterFlaps = document.querySelectorAll('.letter-flap');
+      if (letterIndex >= letterFlaps.length) return;
+      
+      const flap = letterFlaps[letterIndex];
+      const contents = flap.querySelectorAll('.flap-content');
+      contents.forEach(content => {
+        content.style.color = color;
+      });
+    };
+    
     // Function to apply variable color to all word elements (except first)
     const applyVariableColor = (isFinished = true) => {
       const firstColor = firstWordColorInput.value;
@@ -296,34 +351,15 @@ Education</textarea>
         }
       });
 
-      // For Flip Mode
-      if (rotator.mode === 'flip') {
-        const flapContents = document.querySelectorAll('.flap-content');
-        if (flapContents.length === 0) return;
-
+      // For Flip Mode - apply colors to all letters based on current word
+      if (rotator.mode === 'flip' && isFinished) {
         const currIndex = rotator.currentIndex;
         const currColor = currIndex === 0 ? firstColor : otherColor;
-
-        if (isFinished) {
-          // Resting state: ALL parts show the current word color
-          flapContents.forEach(content => {
-            content.style.color = currColor;
-          });
-        } else {
-          // Transition state:
-          // Top halves revealed (top-static, leaf-back) show the NEXT color (currColor)
-          // Bottom halves still visible (bottom-static, leaf-front) show the PREVIOUS color
-          const prevIndex = (currIndex - 1 + rotator.words.length) % rotator.words.length;
-          const prevColor = prevIndex === 0 ? firstColor : otherColor;
-
-          // Parts showing the outgoing word
-          const outgoingParts = document.querySelectorAll('.bottom-static .flap-content, .flap-leaf-front .flap-content');
-          outgoingParts.forEach(el => el.style.color = prevColor);
-
-          // Parts showing the incoming word
-          const incomingParts = document.querySelectorAll('.top-static .flap-content, .flap-leaf-back .flap-content');
-          incomingParts.forEach(el => el.style.color = currColor);
-        }
+        
+        const flapContents = document.querySelectorAll('.flap-content');
+        flapContents.forEach(content => {
+          content.style.color = currColor;
+        });
       }
     };
     
