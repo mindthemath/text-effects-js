@@ -1,3 +1,16 @@
+/* OCR-A Font Face - uses system font if installed */
+@font-face {
+  font-family: 'OCR-A';
+  src: local('OCR-A'),
+       local('OCRA'),
+       local('OCR A Std'),
+       local('OCRAStd'),
+       local('OCR-A Std');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -114,7 +127,7 @@ body {
   border-radius: 4px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
   color: #fff;
-  font-family: 'OCR A', 'OCR-A', 'Courier New', Courier, monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-weight: 900;
   text-transform: uppercase;
   border: 1px solid #333;
@@ -189,7 +202,8 @@ body {
   align-items: center;
   padding-left: 15px;
   font-size: 0.9em; /* Closer to hero text scale */
-  letter-spacing: 0.05em;
+  font-family: 'JetBrains Mono', monospace; /* Explicit monospace for aviation board */
+  letter-spacing: 0; /* Zero spacing for true monospace appearance */
   color: #f0f0f0;
   text-shadow: 0 1px 2px rgba(0,0,0,0.8);
   line-height: 1;

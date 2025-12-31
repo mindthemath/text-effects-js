@@ -5,6 +5,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Word Rotator Demo</title>
+  <!-- Web Fonts for Monospace Options -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@900&family=Roboto+Mono:wght@900&family=Source+Code+Pro:wght@900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -48,6 +52,30 @@
             <input type="radio" name="boardBg" value="invisible">
             <span>Invisible</span>
           </label>
+        </div>
+      </div>
+
+      <div class="control-section" id="boardFontControl" style="display: none;">
+        <h3>Board Font</h3>
+        <div class="control-group vertical">
+          <select id="boardFont" class="text-input" style="max-width: 300px;">
+            <option value="'JetBrains Mono', monospace" selected>JetBrains Mono (Web)</option>
+            <option value="'Roboto Mono', monospace">Roboto Mono (Web)</option>
+            <option value="'Source Code Pro', monospace">Source Code Pro (Web)</option>
+            <option value="'Space Mono', monospace">Space Mono (Web)</option>
+            <option value="'OCR-A', 'OCRA', 'OCR A Std', 'Courier New', Courier, monospace">OCR-A (Aviation) ⚠️ Install font</option>
+            <option value="'Courier New', Courier, monospace">Courier New</option>
+            <option value="'Consolas', 'Monaco', 'Courier New', monospace">Consolas</option>
+            <option value="'Monaco', 'Courier New', monospace">Monaco</option>
+            <option value="'Lucida Console', 'Courier New', monospace">Lucida Console</option>
+            <option value="'Menlo', 'Monaco', 'Courier New', monospace">Menlo</option>
+            <option value="'DejaVu Sans Mono', 'Courier New', monospace">DejaVu Sans Mono</option>
+            <option value="monospace">Generic Monospace</option>
+          </select>
+          <p style="font-size: 0.75rem; color: #666; margin-top: 0.5rem; max-width: 300px;">
+            <strong>Note:</strong> OCR-A requires the font to be installed on your system. 
+            Download from <a href="https://fonts.adobe.com/fonts/ocr-a" target="_blank" style="color: #0066cc;">Adobe Fonts</a> or search for "OCR-A font download".
+          </p>
         </div>
       </div>
 
@@ -136,15 +164,23 @@ Education</textarea>
 
     // Handle mode switching
     const boardBgControl = document.getElementById('boardBackgroundControl');
+    const boardFontControl = document.getElementById('boardFontControl');
     // Initial state check
     boardBgControl.style.display = rotator.mode === 'flip' ? 'block' : 'none';
+    boardFontControl.style.display = rotator.mode === 'flip' ? 'block' : 'none';
 
     document.querySelectorAll('input[name="mode"]').forEach(radio => {
       radio.addEventListener('change', (e) => {
         rotator.setMode(e.target.value);
         boardBgControl.style.display = e.target.value === 'flip' ? 'block' : 'none';
-        // Reapply colors after mode change
-        setTimeout(() => applyVariableColor(true), 0);
+        boardFontControl.style.display = e.target.value === 'flip' ? 'block' : 'none';
+        // Reapply colors and font after mode change
+        setTimeout(() => {
+          applyVariableColor(true);
+          if (e.target.value === 'flip') {
+            applyBoardFont();
+          }
+        }, 0);
       });
     });
 
@@ -154,6 +190,39 @@ Education</textarea>
         const rotatorElement = document.getElementById('wordRotator');
         rotatorElement.setAttribute('data-board-bg', e.target.value);
       });
+    });
+
+    // Handle board font switching
+    const boardFontSelect = document.getElementById('boardFont');
+    let currentBoardFont = boardFontSelect.value; // Store current selection
+    
+    const applyBoardFont = () => {
+      const flapContainer = document.querySelector('.flap-container');
+      const flapContents = document.querySelectorAll('.flap-content');
+      const staticTextElement = document.querySelector('.static-text');
+      
+      // Apply to board elements
+      if (flapContainer) {
+        flapContainer.style.fontFamily = currentBoardFont;
+      }
+      flapContents.forEach(content => {
+        content.style.fontFamily = currentBoardFont;
+      });
+      
+      // Apply to fixed phrase as well
+      if (staticTextElement) {
+        staticTextElement.style.fontFamily = currentBoardFont;
+      }
+      
+      // Recalculate width with new font
+      if (rotator.mode === 'flip') {
+        rotator.updateContainerWidth();
+      }
+    };
+    
+    boardFontSelect.addEventListener('change', (e) => {
+      currentBoardFont = e.target.value;
+      applyBoardFont();
     });
 
     // Handle timing controls
@@ -201,7 +270,8 @@ Education</textarea>
     const staticTextElement = document.querySelector('.static-text');
 
     fixedPhraseInput.addEventListener('input', (e) => {
-      staticTextElement.textContent = e.target.value || 'Mind the';
+      // Preserve all spaces including trailing ones
+      staticTextElement.textContent = e.target.value !== '' ? e.target.value : 'Mind the';
     });
 
     // Handle color updates
@@ -277,6 +347,11 @@ Education</textarea>
     // Set initial colors
     staticTextElement.style.color = fixedColorInput.value;
     applyVariableColor();
+    
+    // Apply initial font if in flip mode
+    if (rotator.mode === 'flip') {
+      setTimeout(applyBoardFont, 0);
+    }
 
     // Reapply color when words are updated
     const originalSetWords = rotator.setWords.bind(rotator);

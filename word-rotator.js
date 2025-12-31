@@ -117,7 +117,13 @@ class WordRotator {
     
     // Use appropriate font for measurement based on mode
     if (this.mode === "flip") {
-      tempMeasure.style.fontFamily = "'OCR A', 'OCR-A', 'Courier New', Courier, monospace"
+      // Get the actual font from the flap-container if it exists, otherwise use default
+      const flapContainer = this.element.querySelector(".flap-container")
+      if (flapContainer) {
+        tempMeasure.style.fontFamily = window.getComputedStyle(flapContainer).fontFamily
+      } else {
+        tempMeasure.style.fontFamily = "'JetBrains Mono', monospace"
+      }
     } else {
       tempMeasure.style.fontFamily = window.getComputedStyle(this.element).fontFamily
     }
