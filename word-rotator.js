@@ -1,7 +1,12 @@
 class WordRotator {
   constructor(config) {
     this.element = document.getElementById(config.elementId)
-    this.words = config.words || ["Math"]
+    // Ensure all words are trimmed and non-empty
+    const rawWords = config.words || ["Math"]
+    this.words = rawWords.map(w => String(w).trim()).filter(w => w.length > 0)
+    if (this.words.length === 0) {
+      this.words = ["Math"] // Fallback if all words were empty
+    }
     this.mode = config.mode || "wheel"
     this.mathInterval = config.mathInterval || 3000
     this.otherInterval = config.otherInterval || 500
@@ -69,13 +74,20 @@ class WordRotator {
 
   setupFlipLayout() {
     // Find the max word length to determine number of letter slots
-    this.maxWordLength = Math.max(...this.words.map(w => w.length))
+    // Ensure we have at least one word and calculate max length correctly
+    if (this.words.length === 0) {
+      this.maxWordLength = 0
+    } else {
+      // Calculate max length - ensure we're using actual trimmed word lengths
+      const wordLengths = this.words.map(w => String(w).trim().length)
+      this.maxWordLength = Math.max(...wordLengths)
+    }
     
     // Create the board container
     const boardContainer = document.createElement("div")
     boardContainer.className = "flip-board"
     
-    // Create individual letter flaps
+    // Create individual letter flaps - exactly maxWordLength, no more, no less
     this.letterFlaps = []
     for (let i = 0; i < this.maxWordLength; i++) {
       const letterContainer = document.createElement("div")
@@ -433,7 +445,8 @@ class WordRotator {
   }
 
   setWords(newWords) {
-    this.words = newWords
+    // Ensure all words are trimmed and non-empty
+    this.words = newWords.map(w => String(w).trim()).filter(w => w.length > 0)
     this.currentIndex = 0
 
     // Clear existing timeout
