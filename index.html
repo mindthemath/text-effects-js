@@ -15,7 +15,7 @@
 <body>
   <div class="hero-container">
     <h1 class="hero-text">
-      <span class="static-text">Mind the</span>
+      <span class="static-text">MIND THE</span>
       <span class="word-rotator" id="wordRotator">
         <span class="word active">Math</span>
       </span>
@@ -124,7 +124,7 @@
             <div style="flex: 1;">
               <label class="slider-label">
                 Fixed phrase:
-                <input type="text" id="fixedPhrase" class="text-input" value="Mind the" placeholder="Enter fixed phrase">
+                <input type="text" id="fixedPhrase" class="text-input" value="MIND THE" placeholder="Enter fixed phrase">
               </label>
             </div>
             <div class="color-input-group" style="flex: 0 0 auto; width: 100px;">
@@ -173,10 +173,10 @@ Education</textarea>
           applyVariableColor(isFinished);
         }
       },
-      onLetterLand: (letterIndex, letter, wordIndex) => {
+      onLetterLand: (letterIndex, letter, wordIndex, isAccent) => {
         // For flip mode: color each letter when it lands on its final value
-        // Only the first word (index 0) gets the accent color
-        applyLetterColor(letterIndex, wordIndex === 0);
+        // Only accent letters (the special 28th notch for first word letters) get the accent color
+        applyLetterColor(letterIndex, isAccent);
       }
     });
 
@@ -309,7 +309,7 @@ Education</textarea>
 
     fixedPhraseInput.addEventListener('input', (e) => {
       // Preserve all spaces including trailing ones
-      staticTextElement.textContent = e.target.value !== '' ? e.target.value : 'Mind the';
+      staticTextElement.textContent = e.target.value !== '' ? e.target.value : 'MIND THE';
     });
 
     // Handle color updates

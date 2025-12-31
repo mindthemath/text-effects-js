@@ -14,10 +14,24 @@ class WordRotator {
     this.lettersLanded = 0 // Track how many letters have finished animating
     this.totalLettersToAnimate = 0
     
-    // Character set for split-flap display (space + alphabet)
-    this.charSet = " ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    // Base character set for split-flap display (space + alphabet = 27 chars)
+    this.baseCharSet = " ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    // Each wheel has 28 notches: base 27 + 1 accent letter (from first word)
+    // The accent letter is at index 27
 
     this.init()
+  }
+
+  // Get the character set for a specific wheel position
+  // Returns { chars: string, accentChar: string, accentIndex: number }
+  getWheelCharSet(position) {
+    const firstWord = this.words[0].toUpperCase()
+    const accentChar = position < firstWord.length ? firstWord[position] : " "
+    return {
+      chars: this.baseCharSet + accentChar,
+      accentChar: accentChar,
+      accentIndex: 27 // Accent is always at position 27
+    }
   }
 
   init() {
@@ -289,60 +303,89 @@ class WordRotator {
     }
   }
 
-  // Get number of flips needed to go from one char to another (always forward in rolodex)
-  getFlipCount(fromChar, toChar) {
-    const fromIdx = this.charSet.indexOf(fromChar)
-    const toIdx = this.charSet.indexOf(toChar)
-    
-    if (fromIdx === -1 || toIdx === -1) return 1 // Fallback for unknown chars
+  // Get number of flips needed to go from one position to another on a wheel
+  getFlipCountOnWheel(wheelCharSet, fromIdx, toIdx) {
     if (fromIdx === toIdx) return 0
+    
+    const wheelSize = wheelCharSet.length // Should be 28
     
     // Always cycle forward (like a real rolodex)
     if (toIdx > fromIdx) {
       return toIdx - fromIdx
     } else {
-      // Wrap around: go from current to end, then from start to target
-      return (this.charSet.length - fromIdx) + toIdx
+      // Wrap around
+      return (wheelSize - fromIdx) + toIdx
     }
   }
 
-  // Get the next character in the rolodex
-  getNextChar(char) {
-    const idx = this.charSet.indexOf(char)
-    if (idx === -1) return char
-    return this.charSet[(idx + 1) % this.charSet.length]
+  // Get the next character on a specific wheel
+  getNextCharOnWheel(wheelCharSet, currentIdx) {
+    return (currentIdx + 1) % wheelCharSet.length
+  }
+
+  // Find where a character is on this wheel (could be regular or accent position)
+  findCharOnWheel(wheelCharSet, char, isAccent) {
+    if (isAccent) {
+      // Accent is always at position 27
+      return 27
+    }
+    // Regular letter is in base positions 0-26
+    const idx = this.baseCharSet.indexOf(char)
+    return idx >= 0 ? idx : 0
   }
 
   // Cycle a letter through all intermediate characters to reach the target
   cycleLetterToTarget(flap, letterIndex, fromLetter, toLetter, flipSpeed, wordIndex) {
-    const flipCount = this.getFlipCount(fromLetter, toLetter)
+    const wheel = this.getWheelCharSet(letterIndex)
+    const wheelChars = wheel.chars
+    
+    // Determine if we're targeting the accent position (first word only)
+    const isTargetAccent = (wordIndex === 0) && (toLetter === wheel.accentChar) && (wheel.accentChar !== " ")
+    
+    // Determine if we're coming from the accent position
+    const prevWordIndex = (wordIndex - 1 + this.words.length) % this.words.length
+    const isFromAccent = (prevWordIndex === 0) && (fromLetter === wheel.accentChar) && (wheel.accentChar !== " ")
+    
+    // Find positions on the wheel
+    const fromIdx = this.findCharOnWheel(wheelChars, fromLetter, isFromAccent)
+    const toIdx = this.findCharOnWheel(wheelChars, toLetter, isTargetAccent)
+    
+    const flipCount = this.getFlipCountOnWheel(wheelChars, fromIdx, toIdx)
+    
+    // IMMEDIATELY reset color to non-accent when starting animation
+    // This prevents accent color from persisting during the cycling animation
+    if (this.onLetterLand && flipCount > 0) {
+      this.onLetterLand(letterIndex, fromLetter, wordIndex, false) // false = not accent during cycling
+    }
     
     if (flipCount === 0) {
       // No change needed, but still notify that this letter is "landed"
       if (this.onLetterLand) {
-        this.onLetterLand(letterIndex, toLetter, wordIndex)
+        this.onLetterLand(letterIndex, toLetter, wordIndex, isTargetAccent)
       }
-      this.onLetterComplete() // Still counts as complete for timing purposes
+      this.onLetterComplete()
       return
     }
 
-    let currentChar = fromLetter
+    let currentIdx = fromIdx
     let flipsRemaining = flipCount
 
     const doOneFlip = () => {
-      const nextChar = this.getNextChar(currentChar)
+      const nextIdx = this.getNextCharOnWheel(wheelChars, currentIdx)
+      const nextChar = wheelChars[nextIdx]
+      const currentChar = wheelChars[currentIdx]
       flipsRemaining--
       const isFinal = flipsRemaining === 0
 
       this.performSingleFlip(flap, currentChar, nextChar, flipSpeed, () => {
-        currentChar = nextChar
+        currentIdx = nextIdx
         
         if (isFinal) {
           // This letter has landed on its final value
           if (this.onLetterLand) {
-            this.onLetterLand(letterIndex, toLetter, wordIndex)
+            this.onLetterLand(letterIndex, toLetter, wordIndex, isTargetAccent)
           }
-          this.onLetterComplete() // Notify that this letter is done animating
+          this.onLetterComplete()
         } else {
           // Continue to next flip
           doOneFlip()
