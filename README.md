@@ -47,8 +47,16 @@ And include the CSS:
 ### Option 3: CDN (Quick Testing)
 
 ```html
-<link rel="stylesheet" href="https://cdn.example.com/word-rotator/styles.css">
-<script src="https://cdn.example.com/word-rotator/word-rotator.js"></script>
+<!-- Text Effects CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mindthemath/text-effects-js@main/styles.css">
+
+<!-- Web Fonts (optional - for flip mode fonts) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@900&family=Roboto+Mono:wght@900&family=Source+Code+Pro:wght@900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+
+<!-- Text Effects JS -->
+<script src="https://cdn.jsdelivr.net/gh/mindthemath/text-effects-js@main/word-rotator.js"></script>
 ```
 
 ## Quick Start
