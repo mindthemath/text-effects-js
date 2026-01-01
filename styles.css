@@ -123,6 +123,7 @@ body {
   overflow: visible;
   height: 1.2em;
   vertical-align: middle;
+  font-size: inherit; /* Ensure font size matches hero-text for consistent scaling */
 }
 
 /* Board container holds all letter flaps */
@@ -148,6 +149,7 @@ body {
   font-family: 'Source Code Pro', monospace;
   font-weight: 900;
   text-transform: uppercase;
+  font-size: inherit; /* Ensure font size inherits from hero-text for consistent scaling */
 }
 
 .flap {
@@ -217,7 +219,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 0.85em;
+  font-size: 1em; /* Match parent font size for consistent scaling */
   font-family: inherit;
   letter-spacing: 0;
   color: #f0f0f0;
