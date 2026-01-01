@@ -156,12 +156,11 @@
           <label class="slider-label" style="margin-bottom: 0.5rem; display: block;">Words</label>
           <div class="control-group vertical">
             <textarea id="wordList" rows="4" placeholder="Enter words, one per line">
-Math
-Art
-Engineering
-Computation
-Design
-Education</textarea>
+math
+science
+technology
+engineering
+art</textarea>
             <button id="updateWords" class="btn-primary">Update</button>
             <button id="resetWords" class="btn-secondary">Reset</button>
           </div>
@@ -391,8 +390,8 @@ Education</textarea>
     });
 
     resetWordsBtn.addEventListener('click', () => {
-      wordListTextarea.value = 'Math\nArt\nEngineering\nComputation\nDesign\nEducation';
-      rotator.setWords(['Math', 'Art', 'Engineering', 'Computation', 'Design', 'Education']);
+      wordListTextarea.value = 'math\nscience\ntechnology\nengineering\nart';
+      rotator.setWords(['math', 'science', 'technology', 'engineering', 'art']);
     });
 
     // Update code preview when word list textarea changes

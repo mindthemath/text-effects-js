@@ -2,10 +2,11 @@ class WordRotator {
   constructor(config) {
     this.element = document.getElementById(config.elementId)
     // Ensure all words are trimmed and non-empty
-    const rawWords = config.words || ["Math"]
+    const defaultWords = ["math", "science", "technology", "engineering", "art"]
+    const rawWords = config.words || defaultWords
     this.words = rawWords.map(w => String(w).trim()).filter(w => w.length > 0)
     if (this.words.length === 0) {
-      this.words = ["Math"] // Fallback if all words were empty
+      this.words = defaultWords // Fallback if all words were empty
     }
     this.mode = config.mode || "wheel"
     this.firstWordInterval = config.firstWordInterval || 3000
