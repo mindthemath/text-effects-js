@@ -8,7 +8,9 @@
   <!-- Web Fonts for Monospace Options -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@900&family=Roboto+Mono:wght@900&family=Source+Code+Pro:wght@900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@900&family=Roboto+Mono:wght@900&family=Source+Code+Pro:wght@900&family=Space+Mono:wght@700&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -22,151 +24,150 @@
         </span>
       </h1>
 
-    <!-- Added comprehensive configuration controls -->
-    <div class="demo-controls">
-      <div class="control-section">
-        <h3>Mode</h3>
-        <div class="control-group">
-          <label class="radio-label">
-            <input type="radio" name="mode" value="wheel">
-            <span>Wheel</span>
-          </label>
-          <label class="radio-label">
-            <input type="radio" name="mode" value="flip" checked>
-            <span>Flip</span>
-          </label>
+      <!-- Added comprehensive configuration controls -->
+      <div class="demo-controls">
+        <div class="control-section">
+          <h3>Mode</h3>
+          <div class="control-group">
+            <label class="radio-label">
+              <input type="radio" name="mode" value="wheel">
+              <span>Wheel</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="mode" value="flip" checked>
+              <span>Flip</span>
+            </label>
+          </div>
         </div>
-      </div>
 
-      <div class="control-section" id="boardBackgroundControl" style="display: none;">
-        <h3>Board Background</h3>
-        <div class="control-group">
-          <label class="radio-label">
-            <input type="radio" name="boardBg" value="black" checked>
-            <span>Black</span>
-          </label>
-          <label class="radio-label">
-            <input type="radio" name="boardBg" value="white">
-            <span>White</span>
-          </label>
-          <label class="radio-label">
-            <input type="radio" name="boardBg" value="invisible">
-            <span>Invisible</span>
-          </label>
+        <div class="control-section" id="boardBackgroundControl" style="display: none;">
+          <h3>Board Background</h3>
+          <div class="control-group">
+            <label class="radio-label">
+              <input type="radio" name="boardBg" value="black" checked>
+              <span>Black</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="boardBg" value="white">
+              <span>White</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="boardBg" value="invisible">
+              <span>Invisible</span>
+            </label>
+          </div>
         </div>
-      </div>
 
-      <div class="control-section" id="boardFontControl" style="display: none;">
-        <h3>Board Font</h3>
-        <div class="control-group vertical">
-          <select id="boardFont" class="text-input" style="max-width: 300px;">
-            <option value="'JetBrains Mono', monospace">JetBrains Mono (Web)</option>
-            <option value="'Roboto Mono', monospace">Roboto Mono (Web)</option>
-            <option value="'Source Code Pro', monospace" selected>Source Code Pro (Web)</option>
-            <option value="'Space Mono', monospace">Space Mono (Web)</option>
-            <option value="'OCR-A', 'OCRA', 'OCR A Std', 'Courier New', Courier, monospace">OCR-A (Aviation) ⚠️ Install font</option>
-            <option value="'Courier New', Courier, monospace">Courier New</option>
-            <option value="'Consolas', 'Monaco', 'Courier New', monospace">Consolas</option>
-            <option value="'Monaco', 'Courier New', monospace">Monaco</option>
-            <option value="'Lucida Console', 'Courier New', monospace">Lucida Console</option>
-            <option value="'Menlo', 'Monaco', 'Courier New', monospace">Menlo</option>
-            <option value="'DejaVu Sans Mono', 'Courier New', monospace">DejaVu Sans Mono</option>
-            <option value="monospace">Generic Monospace</option>
-          </select>
-          <p style="font-size: 0.75rem; color: #666; margin-top: 0.5rem; max-width: 300px;">
-            <strong>Note:</strong> OCR-A requires the font to be installed on your system. 
-            Download from <a href="https://fonts.adobe.com/fonts/ocr-a" target="_blank" style="color: #0066cc;">Adobe Fonts</a> or search for "OCR-A font download".
-          </p>
+        <div class="control-section" id="boardFontControl" style="display: none;">
+          <h3>Board Font</h3>
+          <div class="control-group vertical">
+            <select id="boardFont" class="text-input" style="max-width: 300px;">
+              <option value="'JetBrains Mono', monospace">JetBrains Mono (Web)</option>
+              <option value="'Roboto Mono', monospace">Roboto Mono (Web)</option>
+              <option value="'Source Code Pro', monospace" selected>Source Code Pro (Web)</option>
+              <option value="'Space Mono', monospace">Space Mono (Web)</option>
+              <option value="'OCR-A', 'OCRA', 'OCR A Std', 'Courier New', Courier, monospace">OCR-A (Aviation) ⚠️
+                Install font</option>
+              <option value="'Courier New', Courier, monospace">Courier New</option>
+              <option value="'Consolas', 'Monaco', 'Courier New', monospace">Consolas</option>
+              <option value="'Monaco', 'Courier New', monospace">Monaco</option>
+              <option value="'Lucida Console', 'Courier New', monospace">Lucida Console</option>
+              <option value="'Menlo', 'Monaco', 'Courier New', monospace">Menlo</option>
+              <option value="'DejaVu Sans Mono', 'Courier New', monospace">DejaVu Sans Mono</option>
+              <option value="monospace">Generic Monospace</option>
+            </select>
+            <p style="font-size: 0.75rem; color: #666; margin-top: 0.5rem; max-width: 300px;">
+              <strong>Note:</strong> OCR-A requires the font to be installed on your system.
+              Download from <a href="https://fonts.adobe.com/fonts/ocr-a" target="_blank" style="color: #0066cc;">Adobe
+                Fonts</a> or search for "OCR-A font download".
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div class="control-section">
-        <h3>Timing</h3>
-        <div class="control-group" id="timingModeControl" style="margin-bottom: 1rem; display: none;">
-          <label class="radio-label">
-            <input type="radio" name="timingMode" value="fixed">
-            <span>Fixed Interval</span>
-          </label>
-          <label class="radio-label">
-            <input type="radio" name="timingMode" value="pause" checked>
-            <span>Pause After</span>
-          </label>
-        </div>
-        <div class="control-group vertical">
-          <div style="display: flex; gap: 1rem; align-items: flex-end;">
-            <div style="flex: 1;">
-              <label class="slider-label">
-                First word: <span id="mathTimeValue">3.0s</span>
-                <input type="range" id="mathTime" min="1000" max="8000" value="3000" step="500">
-              </label>
+        <div class="control-section">
+          <h3>Timing</h3>
+          <div class="control-group" id="timingModeControl" style="margin-bottom: 1rem; display: none;">
+            <label class="radio-label">
+              <input type="radio" name="timingMode" value="fixed">
+              <span>Fixed Interval</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="timingMode" value="pause" checked>
+              <span>Pause After</span>
+            </label>
+          </div>
+          <div class="control-group vertical">
+            <div style="display: flex; gap: 1rem; align-items: flex-end;">
+              <div style="flex: 1;">
+                <label class="slider-label">
+                  First word: <span id="mathTimeValue">3.0s</span>
+                  <input type="range" id="mathTime" min="1000" max="8000" value="3000" step="500">
+                </label>
+              </div>
+              <div class="color-input-group" style="flex: 0 0 auto; width: 220px;">
+                <label class="slider-label" style="font-size: 0.75rem; margin-bottom: 0.35rem; display: block;">
+                  Accent (OKLCH / P3)
+                </label>
+                <input type="text" id="firstWordColor" class="text-input" value="oklch(0.9133 0.2195 102.76)"
+                  placeholder="e.g. oklch(0.9133 0.2195 102.76) or color(display-p3 1 1 0)" style="width: 100%;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+                  <input type="color" id="firstWordColorSrgb" class="color-input" value="#fee600"
+                    title="sRGB fallback (hex)">
+                  <a id="oklchPickerLink" href="https://oklch.com/#0.9133,0.2195,102.76,100" target="_blank"
+                    rel="noopener noreferrer" style="font-size: 0.75rem; color: #0066cc;">
+                    OKLCH picker
+                  </a>
+                </div>
+              </div>
             </div>
-            <div class="color-input-group" style="flex: 0 0 auto; width: 220px;">
-              <label class="slider-label" style="font-size: 0.75rem; margin-bottom: 0.35rem; display: block;">
-                Accent (OKLCH / P3)
-              </label>
-              <input
-                type="text"
-                id="firstWordColor"
-                class="text-input"
-                value="oklch(0.9278 0.2508 121.21)"
-                placeholder="e.g. oklch(0.9278 0.2508 121.21) or color(display-p3 1 1 0)"
-                style="width: 100%;"
-              >
-              <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
-                <input type="color" id="firstWordColorSrgb" class="color-input" value="#ffd71c" title="sRGB fallback (hex)">
-                <a id="oklchPickerLink" href="https://oklch.com/#0.9278,0.2508,121.21,100" target="_blank" rel="noopener noreferrer" style="font-size: 0.75rem; color: #0066cc;">
-                  OKLCH picker
-                </a>
+            <div style="display: flex; gap: 1rem; align-items: flex-end;">
+              <div style="flex: 1;">
+                <label class="slider-label">
+                  <span id="otherTimeLabel">Other:</span> <span id="otherTimeValue">0.5s</span>
+                  <input type="range" id="otherTime" min="500" max="5000" value="500" step="500">
+                </label>
+              </div>
+              <div class="color-input-group" style="flex: 0 0 auto; width: 100px;">
+                <input type="color" id="variableColor" class="color-input" value="#666666">
               </div>
             </div>
           </div>
-          <div style="display: flex; gap: 1rem; align-items: flex-end;">
-            <div style="flex: 1;">
-              <label class="slider-label">
-                <span id="otherTimeLabel">Other:</span> <span id="otherTimeValue">0.5s</span>
-                <input type="range" id="otherTime" min="500" max="5000" value="500" step="500">
-              </label>
-            </div>
-            <div class="color-input-group" style="flex: 0 0 auto; width: 100px;">
-              <input type="color" id="variableColor" class="color-input" value="#666666">
+        </div>
+
+        <div class="control-section">
+          <h3>Text</h3>
+          <div class="control-group vertical">
+            <div style="display: flex; gap: 1rem; align-items: flex-end;">
+              <div style="flex: 1;">
+                <label class="slider-label">
+                  Fixed phrase:
+                  <input type="text" id="fixedPhrase" class="text-input" value="MIND THE"
+                    placeholder="Enter fixed phrase">
+                </label>
+              </div>
+              <div class="color-input-group" style="flex: 0 0 auto; width: 100px;">
+                <input type="color" id="fixedColor" class="color-input" value="#1a1a1a">
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="control-section">
-        <h3>Text</h3>
-        <div class="control-group vertical">
-          <div style="display: flex; gap: 1rem; align-items: flex-end;">
-            <div style="flex: 1;">
-              <label class="slider-label">
-                Fixed phrase:
-                <input type="text" id="fixedPhrase" class="text-input" value="MIND THE" placeholder="Enter fixed phrase">
-              </label>
-            </div>
-            <div class="color-input-group" style="flex: 0 0 auto; width: 100px;">
-              <input type="color" id="fixedColor" class="color-input" value="#1a1a1a">
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="control-section">
-        <label class="slider-label" style="margin-bottom: 0.5rem; display: block;">Words</label>
-        <div class="control-group vertical">
-          <textarea id="wordList" rows="4" placeholder="Enter words, one per line">
+        <div class="control-section">
+          <label class="slider-label" style="margin-bottom: 0.5rem; display: block;">Words</label>
+          <div class="control-group vertical">
+            <textarea id="wordList" rows="4" placeholder="Enter words, one per line">
 Math
 Art
 Engineering
 Computation
 Design
 Education</textarea>
-          <button id="updateWords" class="btn-primary">Update</button>
-          <button id="resetWords" class="btn-secondary">Reset</button>
+            <button id="updateWords" class="btn-primary">Update</button>
+            <button id="resetWords" class="btn-secondary">Reset</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
   </div> <!-- End main-content -->
 
   <!-- Code Generator Section -->
@@ -175,7 +176,7 @@ Education</textarea>
       <h2>Export Your Configuration</h2>
       <p>Copy these snippets to add this effect to your site</p>
     </div>
-    
+
     <div class="code-tabs">
       <button class="code-tab active" data-tab="html">HTML</button>
       <button class="code-tab" data-tab="css">CSS Link</button>
@@ -276,7 +277,7 @@ Education</textarea>
     const boardFontControl = document.getElementById('boardFontControl');
     const timingModeControl = document.getElementById('timingModeControl');
     const otherTimeLabel = document.getElementById('otherTimeLabel');
-    
+
     // Initial state check
     const updateFlipModeControls = (isFlip) => {
       boardBgControl.style.display = isFlip ? 'block' : 'none';
@@ -329,12 +330,12 @@ Education</textarea>
     // Handle board font switching
     const boardFontSelect = document.getElementById('boardFont');
     let currentBoardFont = boardFontSelect.value; // Store current selection
-    
+
     const applyBoardFont = () => {
       const letterFlaps = document.querySelectorAll('.letter-flap');
       const flapContents = document.querySelectorAll('.flap-content');
       const staticTextElement = document.querySelector('.static-text');
-      
+
       // Apply to board elements
       letterFlaps.forEach(flap => {
         flap.style.fontFamily = currentBoardFont;
@@ -342,13 +343,13 @@ Education</textarea>
       flapContents.forEach(content => {
         content.style.fontFamily = currentBoardFont;
       });
-      
+
       // Apply to fixed phrase as well
       if (staticTextElement) {
         staticTextElement.style.fontFamily = currentBoardFont;
       }
     };
-    
+
     boardFontSelect.addEventListener('change', (e) => {
       currentBoardFont = e.target.value;
       applyBoardFont();
@@ -430,7 +431,7 @@ Education</textarea>
     const getFirstWordColor = () => {
       const candidate = (firstWordColorInput?.value || '').trim();
       if (candidate && supportsCssColor(candidate)) return candidate;
-      return firstWordColorSrgbInput?.value || '#ffd71c';
+      return firstWordColorSrgbInput?.value || '#fee600';
     };
 
     // Update OKLCH picker link with current color
@@ -439,10 +440,10 @@ Education</textarea>
       if (!oklchPickerLink) return;
 
       const colorValue = (firstWordColorInput?.value || '').trim();
-      
+
       // Parse OKLCH format: oklch(L% C H) or oklch(L C H)
       const oklchMatch = colorValue.match(/oklch\s*\(\s*([\d.]+)%?\s+([\d.]+)\s+([\d.]+)\s*(?:\/\s*([\d.]+))?\s*\)/i);
-      
+
       if (oklchMatch) {
         let lightness = parseFloat(oklchMatch[1]);
         // Convert percentage to 0-1 if needed
@@ -450,31 +451,31 @@ Education</textarea>
         const chroma = parseFloat(oklchMatch[2]);
         const hue = parseFloat(oklchMatch[3]);
         const alpha = oklchMatch[4] ? parseFloat(oklchMatch[4]) * 100 : 100; // Convert 0-1 to 0-100
-        
+
         oklchPickerLink.href = `https://oklch.com/#${lightness},${chroma},${hue},${alpha}`;
       } else {
         // Default to current default color if parsing fails
         oklchPickerLink.href = 'https://oklch.com/#0.95,0.32,105,100';
       }
     };
-    
+
     // Function to apply color to a specific letter flap (for flip mode)
     const applyLetterColor = (letterIndex, isFirstWord) => {
       const firstColor = getFirstWordColor();
       const otherColor = variableColorInput.value;
       const color = isFirstWord ? firstColor : otherColor;
-      
+
       // Get the specific letter flap
       const letterFlaps = document.querySelectorAll('.letter-flap');
       if (letterIndex >= letterFlaps.length) return;
-      
+
       const flap = letterFlaps[letterIndex];
       const contents = flap.querySelectorAll('.flap-content');
       contents.forEach(content => {
         content.style.color = color;
       });
     };
-    
+
     // Function to apply variable color to all word elements (except first)
     const applyVariableColor = (isFinished = true) => {
       const firstColor = getFirstWordColor();
@@ -494,17 +495,17 @@ Education</textarea>
       if (rotator.mode === 'flip' && isFinished) {
         const currIndex = rotator.currentIndex;
         const currColor = currIndex === 0 ? firstColor : otherColor;
-        
+
         const flapContents = document.querySelectorAll('.flap-content');
         flapContents.forEach(content => {
           content.style.color = currColor;
         });
       }
     };
-    
+
     // Function to apply first word color
     const applyFirstWordColor = () => {
-      applyVariableColor(true); 
+      applyVariableColor(true);
     };
 
     fixedColorInput.addEventListener('input', (e) => {
@@ -514,7 +515,7 @@ Education</textarea>
     variableColorInput.addEventListener('input', (e) => {
       applyVariableColor();
     });
-    
+
     firstWordColorInput.addEventListener('input', (e) => {
       applyFirstWordColor();
       updateOklchPickerLink();
@@ -530,7 +531,7 @@ Education</textarea>
     staticTextElement.style.color = fixedColorInput.value;
     applyVariableColor();
     updateOklchPickerLink(); // Initialize OKLCH picker link
-    
+
     // Apply initial font if in flip mode
     if (rotator.mode === 'flip') {
       setTimeout(applyBoardFont, 0);
@@ -551,7 +552,7 @@ Education</textarea>
     // Code Generator
     // ========================================
     const CDN_BASE = 'https://cdn.jsdelivr.net/gh/mindthemath/text-effects-js@main';
-    
+
     const codeHtml = document.getElementById('code-html');
     const codeCss = document.getElementById('code-css');
     const codeJs = document.getElementById('code-js');
@@ -576,7 +577,7 @@ Education</textarea>
       const mathTime = parseInt(document.getElementById('mathTime')?.value || 3000);
       const otherTime = parseInt(document.getElementById('otherTime')?.value || 500);
       const firstWordColorRaw = (document.getElementById('firstWordColor')?.value || '').trim();
-      const firstWordColorFallback = document.getElementById('firstWordColorSrgb')?.value || '#ffd71c';
+      const firstWordColorFallback = document.getElementById('firstWordColorSrgb')?.value || '#fee600';
       const firstWordColor = (firstWordColorRaw && supportsCssColor(firstWordColorRaw)) ? firstWordColorRaw : firstWordColorFallback;
       const otherColor = document.getElementById('variableColor')?.value || '#666666';
       const fixedPhrase = document.getElementById('fixedPhrase')?.value || 'Mind the';
@@ -656,7 +657,7 @@ ${generateJsSnippet(config)}
 
     function updateCodeSnippets() {
       const config = getCurrentConfig();
-      
+
       codeHtml.textContent = generateHtmlSnippet(config);
       codeCss.textContent = generateCssSnippet();
       codeJs.textContent = generateJsSnippet(config);
@@ -668,7 +669,7 @@ ${generateJsSnippet(config)}
       tab.addEventListener('click', () => {
         document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.code-panel').forEach(p => p.classList.remove('active'));
-        
+
         tab.classList.add('active');
         document.getElementById(`panel-${tab.dataset.tab}`).classList.add('active');
       });
@@ -679,7 +680,7 @@ ${generateJsSnippet(config)}
       btn.addEventListener('click', async () => {
         const targetId = btn.dataset.target;
         const codeEl = document.getElementById(targetId);
-        
+
         try {
           await navigator.clipboard.writeText(codeEl.textContent);
           btn.classList.add('copied');
@@ -689,7 +690,7 @@ ${generateJsSnippet(config)}
             </svg>
             Copied!
           `;
-          
+
           setTimeout(() => {
             btn.classList.remove('copied');
             btn.innerHTML = `
@@ -712,7 +713,7 @@ ${generateJsSnippet(config)}
       '#boardFont', '#mathTime', '#otherTime', '#firstWordColor', '#firstWordColorSrgb', '#variableColor',
       '#fixedPhrase', '#fixedColor'
     ];
-    
+
     updateTriggers.forEach(selector => {
       document.querySelectorAll(selector).forEach(el => {
         el.addEventListener('change', updateCodeSnippets);

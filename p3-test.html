@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P3 Color Test</title>
+  <style>
+    body {
+      font-family: monospace;
+      padding: 2rem;
+      background: #1a1a1a;
+      color: #fff;
+    }
+
+    .test-box {
+      width: 200px;
+      height: 200px;
+      margin: 20px 0;
+      border: 2px solid #fff;
+    }
+
+    .p3-yellow {
+      background: oklch(0.9133 0.2195 102.76);
+    }
+
+    .p3-red {
+      background: color(display-p3 1 0 0);
+    }
+
+    .info {
+      margin: 20px 0;
+      padding: 10px;
+      background: #333;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>P3 Color Support Test</h1>
+
+  <div class="info">
+    <h2>Browser Info:</h2>
+    <p id="colorDepth">Color Depth: <span id="depth"></span></p>
+    <p id="pixelDepth">Pixel Depth: <span id="pixel"></span></p>
+    <p id="p3Support">P3 Support: <span id="p3"></span></p>
+    <p id="colorGamut">Color Gamut: <span id="gamut"></span></p>
+  </div>
+
+  <h2>P3 Yellow Test (OKLCH):</h2>
+  <div style="display: flex; gap: 20px; align-items: center;">
+    <div class="test-box p3-yellow"></div>
+    <div class="test-box" style="background: #fee600;"></div>
+    <div>
+      <p><strong>Left:</strong> P3 yellow (oklch(0.9133 0.2195 102.76))</p>
+      <p><strong>Right:</strong> sRGB fallback (#fee600)</p>
+      <p>If left looks more vibrant/saturated, P3 is working!</p>
+    </div>
+  </div>
+
+  <h2>P3 Red Test (display-p3):</h2>
+  <div style="display: flex; gap: 20px; align-items: center;">
+    <div class="test-box p3-red"></div>
+    <div class="test-box" style="background: rgb(255, 0, 0);"></div>
+    <div>
+      <p><strong>Left:</strong> P3 red (color(display-p3 1 0 0))</p>
+      <p><strong>Right:</strong> sRGB red (rgb(255, 0, 0))</p>
+      <p>If left looks more vibrant/saturated, P3 is working!</p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('depth').textContent = window.screen.colorDepth;
+    document.getElementById('pixel').textContent = window.screen.pixelDepth;
+
+    const p3Supported = CSS.supports('color', 'color(display-p3 1 0 0)');
+    document.getElementById('p3').textContent = p3Supported ? '✅ YES' : '❌ NO';
+
+    const gamut = window.screen.colorGamut || 'Not available';
+    document.getElementById('gamut').textContent = gamut;
+
+    // Test what oklch.com checks - media query for color-gamut
+    const p3MediaQuery = window.matchMedia('(color-gamut: p3)');
+    const rec2020MediaQuery = window.matchMedia('(color-gamut: rec2020)');
+
+    const infoDiv = document.querySelector('.info');
+    const p3Media = document.createElement('p');
+    p3Media.innerHTML = 'Media Query (color-gamut: p3): <span id="p3media"></span>';
+    infoDiv.appendChild(p3Media);
+    document.getElementById('p3media').textContent = p3MediaQuery.matches ? '✅ YES' : '❌ NO';
+
+    const rec2020Media = document.createElement('p');
+    rec2020Media.innerHTML = 'Media Query (color-gamut: rec2020): <span id="rec2020media"></span>';
+    infoDiv.appendChild(rec2020Media);
+    document.getElementById('rec2020media').textContent = rec2020MediaQuery.matches ? '✅ YES' : '❌ NO';
+
+    // Log to console as well
+    console.log('Color Depth:', window.screen.colorDepth);
+    console.log('Pixel Depth:', window.screen.pixelDepth);
+    console.log('P3 Support (CSS.supports):', p3Supported);
+    console.log('Color Gamut (window.screen.colorGamut):', gamut);
+    console.log('Media Query (color-gamut: p3):', p3MediaQuery.matches);
+    console.log('Media Query (color-gamut: rec2020):', rec2020MediaQuery.matches);
+  </script>
+</body>
+
+</html>
