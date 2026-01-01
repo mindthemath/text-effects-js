@@ -589,9 +589,11 @@ Education</textarea>
 
     function generateHtmlSnippet(config) {
       const wordsJson = JSON.stringify(config.words);
-      return `<div class="hero-text">
-  <span class="static-text" style="color: ${config.fixedColor}; font-family: ${config.boardFont};">${escapeHtml(config.fixedPhrase)}</span>
-  <span id="wordRotator" class="word-rotator" data-mode="${config.mode}" data-board-bg="${config.boardBg}"></span>
+      return `<div class="hero-container">
+  <h1 class="hero-text">
+    <span class="static-text" style="color: ${config.fixedColor}; font-family: ${config.boardFont};">${escapeHtml(config.fixedPhrase)}</span>
+    <span id="wordRotator" class="word-rotator" data-mode="${config.mode}" data-board-bg="${config.boardBg}"></span>
+  </h1>
 </div>`;
     }
 

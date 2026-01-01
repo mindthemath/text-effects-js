@@ -35,17 +35,17 @@ body {
   text-align: left;
   max-width: 1200px; /* Wider to accommodate longer words in flip mode */
   width: 100%;
-  overflow-x: visible; /* Allow content to expand if needed */
+  container-type: inline-size;
 }
 
 .hero-text {
-  font-size: clamp(2rem, 8vw, 5rem);
+  font-size: clamp(1rem, 7cqw, 5rem);
   font-weight: 700;
   color: #1a1a1a;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 1rem;
+  gap: 2cqw;
   flex-wrap: nowrap; /* Prevent wrapping to a new line */
   margin-bottom: 3rem;
 }
@@ -59,7 +59,7 @@ body {
 .word-rotator {
   position: relative;
   display: inline-block;
-  min-width: 200px;
+  min-width: 4em;
   height: 1.2em;
   perspective: 1000px;
   overflow: hidden;
@@ -69,7 +69,7 @@ body {
 }
 
 .word-rotator[data-mode="flip"] {
-  min-width: 300px; /* Wider minimum for flip mode to accommodate longer words */
+  min-width: 6em; /* Wider minimum for flip mode to accommodate longer words */
 }
 
 .word {
@@ -684,14 +684,6 @@ body {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .hero-text {
-    font-size: 2.5rem;
-  }
-
-  .word-rotator {
-    min-width: 150px;
-  }
-
   .demo-controls {
     padding: 1.5rem;
   }
