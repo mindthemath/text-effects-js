@@ -1,4 +1,4 @@
-# Word Rotator
+# Text Effects JS
 
 An animated word rotation component with two display modes: **Wheel** (vertical scrolling) and **Flip** (airport-style split-flap display). Perfect for hero sections, landing pages, and dynamic text displays.
 
@@ -16,32 +16,32 @@ An animated word rotation component with two display modes: **Wheel** (vertical 
 ### Option 1: Direct File Inclusion (Simplest)
 
 1. Copy the following files to your project:
-   - `word-rotator.js`
+   - `text-effects.js`
    - `styles.css`
 
 2. Include them in your HTML:
 
 ```html
 <link rel="stylesheet" href="path/to/styles.css">
-<script src="path/to/word-rotator.js"></script>
+<script src="path/to/text-effects.js"></script>
 ```
 
 ### Option 2: NPM Package (Recommended for Production)
 
 ```bash
-npm install word-rotator
+npm install text-effects-js
 ```
 
 Then import in your JavaScript:
 
 ```javascript
-import WordRotator from 'word-rotator';
+import WordRotator from 'text-effects-js';
 ```
 
 And include the CSS:
 
 ```css
-@import 'word-rotator/dist/styles.css';
+@import 'text-effects-js/dist/styles.css';
 ```
 
 ### Option 3: CDN (Quick Testing)
@@ -56,7 +56,7 @@ And include the CSS:
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@900&family=Roboto+Mono:wght@900&family=Source+Code+Pro:wght@900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
 
 <!-- Text Effects JS -->
-<script src="https://cdn.jsdelivr.net/gh/mindthemath/text-effects-js@main/word-rotator.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/mindthemath/text-effects-js@main/text-effects.js"></script>
 ```
 
 ## Quick Start
@@ -75,7 +75,7 @@ And include the CSS:
     <span id="wordRotator"></span>
   </h1>
 
-  <script src="word-rotator.js"></script>
+  <script src="text-effects.js"></script>
   <script>
     const rotator = new WordRotator({
       elementId: 'wordRotator',

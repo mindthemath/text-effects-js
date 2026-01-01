@@ -1,18 +1,18 @@
 {
-  "name": "word-rotator",
-  "version": "1.0.0",
+  "name": "text-effects-js",
+  "version": "0.1.0",
   "description": "Animated word rotation component with wheel and flip display modes",
-  "main": "word-rotator.js",
+  "main": "text-effects.js",
   "files": [
-    "word-rotator.js",
+    "text-effects.js",
     "styles.css",
     "dist"
   ],
   "scripts": {
     "build": "npm run build:js && npm run build:css",
     "build:js": "npm run build:js:iife && npm run build:js:esm",
-    "build:js:iife": "esbuild word-rotator.js --bundle --minify --format=iife --global-name=WordRotator --outfile=dist/word-rotator.min.js",
-    "build:js:esm": "esbuild word-rotator.js --bundle --minify --format=esm --outfile=dist/word-rotator.esm.js",
+    "build:js:iife": "esbuild text-effects.js --bundle --minify --format=iife --global-name=WordRotator --outfile=dist/text-effects.min.js",
+    "build:js:esm": "esbuild text-effects.js --bundle --minify --format=esm --outfile=dist/text-effects.esm.js",
     "build:css": "esbuild styles.css --minify --outfile=dist/styles.min.css",
     "prepublishOnly": "npm run build"
   },

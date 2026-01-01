@@ -1,6 +1,6 @@
-# Building and Bundling Word Rotator
+# Building and Bundling Text Effects JS
 
-This document explains how to bundle and distribute the Word Rotator component for use in other websites.
+This document explains how to bundle and distribute the Text Effects JS component for use in other websites.
 
 ## Distribution Options
 
@@ -8,7 +8,7 @@ This document explains how to bundle and distribute the Word Rotator component f
 
 The component can be used directly with the provided files:
 
-- `word-rotator.js` - The main component class
+- `text-effects.js` - The main component class
 - `styles.css` - All required styles
 
 **Pros:**
@@ -37,7 +37,7 @@ npm install --save-dev esbuild
 {
   "scripts": {
     "build": "npm run build:js && npm run build:css",
-    "build:js": "esbuild word-rotator.js --bundle --minify --format=iife --global-name=WordRotator --outfile=dist/word-rotator.min.js",
+    "build:js": "esbuild text-effects.js --bundle --minify --format=iife --global-name=TextEffects --outfile=dist/text-effects.min.js",
     "build:css": "esbuild styles.css --minify --outfile=dist/styles.min.css"
   }
 }
@@ -49,7 +49,7 @@ npm run build
 ```
 
 This creates:
-- `dist/word-rotator.min.js` - Minified JavaScript bundle
+- `dist/text-effects.min.js` - Minified JavaScript bundle
 - `dist/styles.min.css` - Minified CSS
 
 #### Using Rollup (More Control)
@@ -64,9 +64,9 @@ npm install --save-dev rollup @rollup/plugin-terser
 import { terser } from '@rollup/plugin-terser';
 
 export default {
-  input: 'word-rotator.js',
+  input: 'text-effects.js',
   output: {
-    file: 'dist/word-rotator.min.js',
+    file: 'dist/text-effects.min.js',
     format: 'iife',
     name: 'WordRotator'
   },
@@ -84,7 +84,7 @@ npx rollup -c
 Create an ES module version for modern bundlers:
 
 ```bash
-esbuild word-rotator.js --bundle --format=esm --outfile=dist/word-rotator.esm.js
+esbuild text-effects.js --bundle --format=esm --outfile=dist/text-effects.esm.js
 ```
 
 ### Option 4: UMD Bundle (Universal Module Definition)
@@ -92,7 +92,7 @@ esbuild word-rotator.js --bundle --format=esm --outfile=dist/word-rotator.esm.js
 For maximum compatibility:
 
 ```bash
-esbuild word-rotator.js --bundle --format=umd --global-name=WordRotator --outfile=dist/word-rotator.umd.js
+esbuild text-effects.js --bundle --format=umd --global-name=TextEffects --outfile=dist/text-effects.umd.js
 ```
 
 ## Complete Build Setup
@@ -101,22 +101,22 @@ Here's a complete `package.json` setup for building all formats:
 
 ```json
 {
-  "name": "word-rotator",
+  "name": "text-effects-js",
   "version": "1.0.0",
   "description": "Animated word rotation component",
-  "main": "dist/word-rotator.min.js",
-  "module": "dist/word-rotator.esm.js",
+  "main": "dist/text-effects.min.js",
+  "module": "dist/text-effects.esm.js",
   "files": [
     "dist",
-    "word-rotator.js",
+    "text-effects.js",
     "styles.css"
   ],
   "scripts": {
     "build": "npm run build:js && npm run build:css",
     "build:js": "npm run build:js:iife && npm run build:js:esm && npm run build:js:umd",
-    "build:js:iife": "esbuild word-rotator.js --bundle --minify --format=iife --global-name=WordRotator --outfile=dist/word-rotator.min.js",
-    "build:js:esm": "esbuild word-rotator.js --bundle --minify --format=esm --outfile=dist/word-rotator.esm.js",
-    "build:js:umd": "esbuild word-rotator.js --bundle --minify --format=umd --global-name=WordRotator --outfile=dist/word-rotator.umd.js",
+    "build:js:iife": "esbuild text-effects.js --bundle --minify --format=iife --global-name=WordRotator --outfile=dist/text-effects.min.js",
+    "build:js:esm": "esbuild text-effects.js --bundle --minify --format=esm --outfile=dist/text-effects.esm.js",
+    "build:js:umd": "esbuild text-effects.js --bundle --minify --format=umd --global-name=WordRotator --outfile=dist/text-effects.umd.js",
     "build:css": "esbuild styles.css --minify --outfile=dist/styles.min.css",
     "prepublishOnly": "npm run build"
   },
@@ -129,13 +129,13 @@ Here's a complete `package.json` setup for building all formats:
 ## File Structure After Build
 
 ```
-word-rotator/
+text-effects-js/
 ├── dist/
-│   ├── word-rotator.min.js    # IIFE bundle (browser script tag)
-│   ├── word-rotator.esm.js    # ES module (modern bundlers)
-│   ├── word-rotator.umd.js    # UMD bundle (universal)
+│   ├── text-effects.min.js    # IIFE bundle (browser script tag)
+│   ├── text-effects.esm.js    # ES module (modern bundlers)
+│   ├── text-effects.umd.js    # UMD bundle (universal)
 │   └── styles.min.css         # Minified CSS
-├── word-rotator.js            # Source (for development)
+├── text-effects.js            # Source (for development)
 ├── styles.css                 # Source (for development)
 ├── package.json
 └── README.md
@@ -147,7 +147,7 @@ word-rotator/
 
 ```html
 <link rel="stylesheet" href="dist/styles.min.css">
-<script src="dist/word-rotator.min.js"></script>
+<script src="dist/text-effects.min.js"></script>
 <script>
   const rotator = new WordRotator({
     elementId: 'rotator',
@@ -159,7 +159,7 @@ word-rotator/
 ### ES Module Import
 
 ```javascript
-import WordRotator from './dist/word-rotator.esm.js';
+import WordRotator from './dist/text-effects.esm.js';
 import './dist/styles.min.css';
 
 const rotator = new WordRotator({
@@ -171,7 +171,7 @@ const rotator = new WordRotator({
 ### CommonJS/Require (UMD)
 
 ```javascript
-const WordRotator = require('./dist/word-rotator.umd.js');
+const WordRotator = require('./dist/text-effects.umd.js');
 require('./dist/styles.min.css');
 ```
 
@@ -180,7 +180,7 @@ require('./dist/styles.min.css');
 1. Update `package.json` with proper metadata:
 ```json
 {
-  "name": "word-rotator",
+  "name": "text-effects-js",
   "version": "1.0.0",
   "description": "Animated word rotation component",
   "keywords": ["animation", "rotator", "text", "ui"],
@@ -188,7 +188,7 @@ require('./dist/styles.min.css');
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/word-rotator.git"
+    "url": "https://github.com/yourusername/text-effects-js.git"
   }
 }
 ```
@@ -207,11 +207,11 @@ npm publish
 
 After building, you can host the files on a CDN:
 
-1. Upload `dist/word-rotator.min.js` and `dist/styles.min.css` to your CDN
+1. Upload `dist/text-effects.min.js` and `dist/styles.min.css` to your CDN
 2. Users can include via:
 ```html
-<link rel="stylesheet" href="https://cdn.example.com/word-rotator/styles.min.css">
-<script src="https://cdn.example.com/word-rotator/word-rotator.min.js"></script>
+<link rel="stylesheet" href="https://cdn.example.com/text-effects-js/styles.min.css">
+<script src="https://cdn.example.com/text-effects-js/text-effects.min.js"></script>
 ```
 
 ## Source Maps (Optional)
@@ -219,10 +219,10 @@ After building, you can host the files on a CDN:
 For debugging, include source maps:
 
 ```bash
-esbuild word-rotator.js --bundle --minify --sourcemap --format=iife --global-name=WordRotator --outfile=dist/word-rotator.min.js
+esbuild text-effects.js --bundle --minify --sourcemap --format=iife --global-name=WordRotator --outfile=dist/text-effects.min.js
 ```
 
-This creates `dist/word-rotator.min.js.map` for debugging.
+This creates `dist/text-effects.min.js.map` for debugging.
 
 ## Size Optimization Tips
 
@@ -235,7 +235,7 @@ This creates `dist/word-rotator.min.js.map` for debugging.
 
 After building, test all formats:
 
-1. **IIFE**: Open `index.html` with script tag pointing to `dist/word-rotator.min.js`
+1. **IIFE**: Open `index.html` with script tag pointing to `dist/text-effects.min.js`
 2. **ESM**: Use a bundler like Vite or Webpack
 3. **UMD**: Test with both browser and Node.js environments
 

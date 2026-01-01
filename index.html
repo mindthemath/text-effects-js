@@ -243,7 +243,7 @@ Education</textarea>
     </div>
   </div>
 
-  <script src="word-rotator.js"></script>
+  <script src="text-effects.js"></script>
   <script>
     // Parse initial words from textarea
     const wordListTextarea = document.getElementById('wordList');
@@ -610,7 +610,7 @@ Education</textarea>
     function generateJsSnippet(config) {
       const wordsStr = config.words.map(w => `'${w}'`).join(', ');
       return `<!-- Text Effects JS -->
-<script src="${CDN_BASE}/word-rotator.js"><\/script>
+<script src="${CDN_BASE}/text-effects.js"><\/script>
 <script>
   const animatedText = new WordRotator({
     elementId: 'wordRotator',
