@@ -45,7 +45,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 2cqw;
+  gap: 0;
   flex-wrap: nowrap; /* Prevent wrapping to a new line */
   margin-bottom: 3rem;
 }
@@ -54,6 +54,7 @@ body {
   display: inline-block;
   white-space: nowrap;
   flex-shrink: 0; /* Prevent static text from shrinking */
+  word-spacing: -0.333em; /* Tighter kerning for fixed text */
 }
 
 .word-rotator {
@@ -66,10 +67,12 @@ body {
   white-space: nowrap;
   vertical-align: middle; /* Align with static text */
   flex-shrink: 0; /* Prevent rotator from shrinking */
+  margin-left: 0.333em; /* Match natural word spacing like between "MIND" and "THE" */
 }
 
 .word-rotator[data-mode="flip"] {
-  min-width: 6em; /* Wider minimum for flip mode to accommodate longer words */
+  min-width: 0; /* Let content determine width */
+  width: fit-content; /* Fit exactly to content */
 }
 
 .word {
@@ -127,12 +130,13 @@ body {
   display: flex;
   gap: 3px;
   height: 100%;
-  padding: 4px 6px;
+  padding: 4px 3px; /* Reduced horizontal padding to minimize extra space */
   background: #0a0a0a;
   border-radius: 6px;
   box-shadow: 
     0 4px 12px rgba(0,0,0,0.4),
     inset 0 1px 0 rgba(255,255,255,0.05);
+  width: fit-content; /* Fit exactly to content */
 }
 
 /* Individual letter flap container */

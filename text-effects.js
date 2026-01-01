@@ -164,10 +164,10 @@ class WordRotator {
 
   updateContainerWidth() {
     if (this.mode === "flip") {
-      // For flip mode, width is determined by number of letter flaps
-      // Each letter flap is 0.7em wide plus 3px gap, plus board padding
-      // Let CSS handle it - just set auto width
-      this.element.style.width = "auto"
+      // For flip mode, width should fit exactly to the board content (all flaps)
+      // CSS will handle sizing with fit-content, but ensure no min-width constraint
+      this.element.style.width = "fit-content"
+      this.element.style.minWidth = "0"
       return
     }
     
