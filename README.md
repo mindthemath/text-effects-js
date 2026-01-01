@@ -94,10 +94,11 @@ And include the CSS:
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `elementId` | `string` | **required** | The ID of the HTML element where the rotator will be rendered |
-| `words` | `string[]` | `["Math"]` | Array of words to rotate through |
+| `words` | `string[]` | `["math", "science", "technology", "engineering", "art"]` | Array of words to rotate through |
 | `mode` | `'wheel'` \| `'flip'` | `'wheel'` | Display mode: `'wheel'` for vertical scrolling, `'flip'` for split-flap board |
 | `firstWordInterval` | `number` | `3000` | Duration (in milliseconds) to display the first word before rotating |
-| `otherWordInterval` | `number` | `500` | Duration (in milliseconds) to display other words before rotating |
+| `otherWordInterval` | `number` | `500` | Duration (in milliseconds) to display middle words before rotating |
+| `lastWordInterval` | `number` | `otherWordInterval` | Duration (in milliseconds) to display the last word before rotating back to the first |
 | `timingMode` | `'fixed'` \| `'pause'` | `'pause'` | Timing behavior: `'fixed'` = interval from start, `'pause'` = wait after animation completes |
 | `onRotate` | `function` | `null` | Callback fired when rotation completes: `(index, isFinished) => {}` |
 | `onLetterLand` | `function` | `null` | Callback fired when each letter lands (flip mode only): `(letterIndex, letter, wordIndex, isAccent) => {}` |
@@ -111,6 +112,7 @@ const rotator = new WordRotator({
   mode: 'flip',
   firstWordInterval: 3000,
   otherWordInterval: 500,
+  lastWordInterval: 1000,
   timingMode: 'pause',
   onRotate: (index, isFinished) => {
     console.log(`Rotated to word ${index}, finished: ${isFinished}`);
@@ -176,7 +178,8 @@ const rotator = new WordRotator({
   words: ['MATH', 'ART', 'ENGINEERING'],
   mode: 'flip',
   firstWordInterval: 3000,
-  otherWordInterval: 500
+  otherWordInterval: 500,
+  lastWordInterval: 1000
 });
 
 // Set white board background
@@ -201,12 +204,14 @@ Update the word list. The rotator will reset to the first word.
 rotator.setWords(['New', 'Word', 'List']);
 ```
 
-### `setIntervals(firstWordInterval, otherWordInterval)`
+### `setIntervals(firstWordInterval, otherWordInterval, lastWordInterval)`
 
 Update timing intervals dynamically.
 
 ```javascript
-rotator.setIntervals(5000, 1000); // 5s for first word, 1s for others
+rotator.setIntervals(5000, 1000, 2000); // 5s for first word, 1s for middle words, 2s for last word
+// If lastWordInterval is omitted, it defaults to otherWordInterval
+rotator.setIntervals(5000, 1000); // 5s for first word, 1s for others (including last)
 ```
 
 ### `setTimingMode(mode)`
@@ -374,7 +379,8 @@ Requires modern browser with CSS 3D transforms support (all browsers from 2012+)
     words: ['MATH', 'ART', 'DESIGN'],
     mode: 'flip',
     firstWordInterval: 3000,
-    otherWordInterval: 800
+    otherWordInterval: 800,
+    lastWordInterval: 1000
   });
 </script>
 ```

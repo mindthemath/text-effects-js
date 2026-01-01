@@ -131,6 +131,14 @@
                 <input type="color" id="variableColor" class="color-input" value="#666666">
               </div>
             </div>
+            <div style="display: flex; gap: 1rem; align-items: flex-end;">
+              <div style="flex: 1;">
+                <label class="slider-label">
+                  Last word: <span id="lastTimeValue">1.0s</span>
+                  <input type="range" id="lastTime" min="500" max="5000" value="1000" step="500">
+                </label>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -258,6 +266,7 @@ art</textarea>
       mode: 'flip',
       firstWordInterval: 3000,
       otherWordInterval: 500,
+      lastWordInterval: 1000,
       onRotate: (index, isFinished) => {
         // For wheel mode, apply colors on rotation
         if (rotator.mode === 'wheel') {
@@ -357,19 +366,33 @@ art</textarea>
     // Handle timing controls
     const mathTimeSlider = document.getElementById('mathTime');
     const otherTimeSlider = document.getElementById('otherTime');
+    const lastTimeSlider = document.getElementById('lastTime');
     const mathTimeValue = document.getElementById('mathTimeValue');
     const otherTimeValue = document.getElementById('otherTimeValue');
+    const lastTimeValue = document.getElementById('lastTimeValue');
 
     mathTimeSlider.addEventListener('input', (e) => {
       const value = parseInt(e.target.value);
       mathTimeValue.textContent = (value / 1000).toFixed(1) + 's';
-      rotator.setIntervals(value, parseInt(otherTimeSlider.value));
+      rotator.setIntervals(value, parseInt(otherTimeSlider.value), parseInt(lastTimeSlider.value));
     });
 
     otherTimeSlider.addEventListener('input', (e) => {
       const value = parseInt(e.target.value);
       otherTimeValue.textContent = (value / 1000).toFixed(1) + 's';
-      rotator.setIntervals(parseInt(mathTimeSlider.value), value);
+      rotator.setIntervals(parseInt(mathTimeSlider.value), value, parseInt(lastTimeSlider.value));
+    });
+
+    lastTimeSlider.addEventListener('input', (e) => {
+      const value = parseInt(e.target.value);
+      lastTimeValue.textContent = (value / 1000).toFixed(1) + 's';
+      rotator.setIntervals(parseInt(mathTimeSlider.value), parseInt(otherTimeSlider.value), value);
+    });
+
+    lastTimeSlider.addEventListener('input', (e) => {
+      const value = parseInt(e.target.value);
+      lastTimeValue.textContent = (value / 1000).toFixed(1) + 's';
+      rotator.setIntervals(parseInt(mathTimeSlider.value), parseInt(otherTimeSlider.value), value);
     });
 
     // Handle word list updates
@@ -575,6 +598,7 @@ art</textarea>
       const boardFont = document.getElementById('boardFont')?.value || "'Source Code Pro', monospace";
       const mathTime = parseInt(document.getElementById('mathTime')?.value || 3000);
       const otherTime = parseInt(document.getElementById('otherTime')?.value || 500);
+      const lastTime = parseInt(document.getElementById('lastTime')?.value || 1000);
       const firstWordColorRaw = (document.getElementById('firstWordColor')?.value || '').trim();
       const firstWordColorFallback = document.getElementById('firstWordColorSrgb')?.value || '#fee600';
       const firstWordColor = (firstWordColorRaw && supportsCssColor(firstWordColorRaw)) ? firstWordColorRaw : firstWordColorFallback;
@@ -583,7 +607,7 @@ art</textarea>
       const fixedColor = document.getElementById('fixedColor')?.value || '#1a1a1a';
       const words = getWordsArray();
 
-      return { mode, timingMode, boardBg, boardFont, mathTime, otherTime, firstWordColor, otherColor, fixedPhrase, fixedColor, words };
+      return { mode, timingMode, boardBg, boardFont, mathTime, otherTime, lastTime, firstWordColor, otherColor, fixedPhrase, fixedColor, words };
     }
 
     function generateHtmlSnippet(config) {
@@ -616,8 +640,9 @@ art</textarea>
     words: [${wordsStr}],
     mode: '${config.mode}',
     timingMode: '${config.timingMode}',
-    mathInterval: ${config.mathTime},
-    otherInterval: ${config.otherTime},
+    firstWordInterval: ${config.mathTime},
+    otherWordInterval: ${config.otherTime},
+    lastWordInterval: ${config.lastTime},
     onLetterLand: (letterIndex, letter, wordIndex, isAccent) => {
       // Apply accent color to first word letters
       const color = isAccent ? '${config.firstWordColor}' : '${config.otherColor}';
@@ -711,7 +736,7 @@ ${generateJsSnippet(config)}
     // Update code on any setting change
     const updateTriggers = [
       'input[name="mode"]', 'input[name="timingMode"]', 'input[name="boardBg"]',
-      '#boardFont', '#mathTime', '#otherTime', '#firstWordColor', '#firstWordColorSrgb', '#variableColor',
+      '#boardFont', '#mathTime', '#otherTime', '#lastTime', '#firstWordColor', '#firstWordColorSrgb', '#variableColor',
       '#fixedPhrase', '#fixedColor'
     ];
 
