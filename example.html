@@ -1,52 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Word Rotator - Minimal Example</title>
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      background: #f5f5f5;
-    }
+  <title>Text Effect</title>
+  
+  <!-- Text Effects CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mindthemath/text-effects-js@main/styles.css">
 
-    .container {
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 3rem;
-      font-weight: 700;
-      color: #1a1a1a;
-    }
-  </style>
+<!-- Web Fonts (optional - for flip mode fonts) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@900&family=Roboto+Mono:wght@900&family=Source+Code+Pro:wght@900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
 </head>
-
 <body>
-  <div class="container">
-    <h1>
-      Welcome to <span id="rotator"></span>
-    </h1>
-  </div>
 
-  <script src="text-effects.js"></script>
-  <script>
-    // Simple example
-    const rotator = new WordRotator({
-      elementId: 'rotator',
-      words: ['Innovation', 'Creativity', 'Excellence', 'Design'],
-      mode: 'wheel',
-      firstWordInterval: 2000,
-      otherWordInterval: 1000
-    });
-  </script>
+<div class="hero-container">
+  <h1 class="hero-text">
+    <span class="static-text" style="color: #1a1a1a; font-family: 'Source Code Pro', monospace;">MIND THE</span>
+    <span id="wordRotator" class="word-rotator" data-mode="flip" data-board-bg="black"></span>
+  </h1>
+</div>
+
+<!-- Text Effects JS -->
+<script src="https://cdn.jsdelivr.net/gh/mindthemath/text-effects-js@main/text-effects.js"></script>
+<script>
+  const animatedText = new WordRotator({
+    elementId: 'wordRotator',
+    words: ['math', 'science', 'technology', 'engineering', 'art'],
+    mode: 'flip',
+    timingMode: 'pause',
+    firstWordInterval: 3000,
+    otherWordInterval: 500,
+    lastWordInterval: 1000,
+    onLetterLand: (letterIndex, letter, wordIndex, isAccent) => {
+      // Apply accent color to first word letters
+      const color = isAccent ? 'oklch(0.9133 0.2195 102.76)' : '#666666';
+      const flaps = document.querySelectorAll('.letter-flap');
+      if (letterIndex < flaps.length) {
+        flaps[letterIndex].querySelectorAll('.flap-content').forEach(el => {
+          el.style.color = color;
+        });
+      }
+    }
+  });
+
+  // Apply board font (flip mode)
+  document.querySelectorAll('.letter-flap, .flap-content').forEach(el => {
+    el.style.fontFamily = "'Source Code Pro', monospace";
+  });
+</script>
 </body>
-
 </html>
