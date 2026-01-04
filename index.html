@@ -259,6 +259,43 @@ art</textarea>
       .map(w => w.trim())
       .filter(w => w.length > 0);
 
+    // ------------------------------------------------
+    // Color helpers (must be defined BEFORE WordRotator init)
+    // because flip-mode now calls `onLetterLand` during first render.
+    // ------------------------------------------------
+    const fixedColorInput = document.getElementById('fixedColor');
+    const variableColorInput = document.getElementById('variableColor');
+    const firstWordColorInput = document.getElementById('firstWordColor');
+    const firstWordColorSrgbInput = document.getElementById('firstWordColorSrgb');
+
+    const supportsCssColor = (value) => {
+      try {
+        return typeof CSS !== 'undefined' && typeof CSS.supports === 'function' && CSS.supports('color', value);
+      } catch (_) {
+        return false;
+      }
+    };
+
+    const getFirstWordColor = () => {
+      const candidate = (firstWordColorInput?.value || '').trim();
+      if (candidate && supportsCssColor(candidate)) return candidate;
+      return firstWordColorSrgbInput?.value || '#fee600';
+    };
+
+    const applyLetterColor = (letterIndex, isFirstWord) => {
+      const firstColor = getFirstWordColor();
+      const otherColor = variableColorInput.value;
+      const color = isFirstWord ? firstColor : otherColor;
+
+      const letterFlaps = document.querySelectorAll('.letter-flap');
+      if (letterIndex >= letterFlaps.length) return;
+
+      const flap = letterFlaps[letterIndex];
+      flap.querySelectorAll('.flap-content').forEach(content => {
+        content.style.color = color;
+      });
+    };
+
     // Initialize the word rotator
     const rotator = new WordRotator({
       elementId: 'wordRotator',
@@ -434,27 +471,7 @@ art</textarea>
     });
 
     // Handle color updates
-    const fixedColorInput = document.getElementById('fixedColor');
-    const variableColorInput = document.getElementById('variableColor');
-
-    // Handle first word color
-    const firstWordColorInput = document.getElementById('firstWordColor');
-    const firstWordColorSrgbInput = document.getElementById('firstWordColorSrgb');
-
-    // OKLCH / wide-gamut support helpers
-    const supportsCssColor = (value) => {
-      try {
-        return typeof CSS !== 'undefined' && typeof CSS.supports === 'function' && CSS.supports('color', value);
-      } catch (_) {
-        return false;
-      }
-    };
-
-    const getFirstWordColor = () => {
-      const candidate = (firstWordColorInput?.value || '').trim();
-      if (candidate && supportsCssColor(candidate)) return candidate;
-      return firstWordColorSrgbInput?.value || '#fee600';
-    };
+    // (inputs + supportsCssColor + getFirstWordColor are defined above to avoid TDZ issues)
 
     // Update OKLCH picker link with current color
     const updateOklchPickerLink = () => {
@@ -481,22 +498,7 @@ art</textarea>
       }
     };
 
-    // Function to apply color to a specific letter flap (for flip mode)
-    const applyLetterColor = (letterIndex, isFirstWord) => {
-      const firstColor = getFirstWordColor();
-      const otherColor = variableColorInput.value;
-      const color = isFirstWord ? firstColor : otherColor;
-
-      // Get the specific letter flap
-      const letterFlaps = document.querySelectorAll('.letter-flap');
-      if (letterIndex >= letterFlaps.length) return;
-
-      const flap = letterFlaps[letterIndex];
-      const contents = flap.querySelectorAll('.flap-content');
-      contents.forEach(content => {
-        content.style.color = color;
-      });
-    };
+    // applyLetterColor is defined above (needs to exist before rotator init)
 
     // Function to apply variable color to all word elements (except first)
     const applyVariableColor = (isFinished = true) => {
@@ -653,6 +655,13 @@ art</textarea>
         });
       }
     }
+  });
+
+  // Ensure initial render is colored correctly on first load.
+  // (Some builds don't call onLetterLand for the initial letters.)
+  const initialColor = (animatedText.currentIndex === 0) ? '${config.firstWordColor}' : '${config.otherColor}';
+  document.querySelectorAll('.flap-content').forEach(el => {
+    el.style.color = initialColor;
   });
 
   // Apply board font (flip mode)

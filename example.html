@@ -45,6 +45,13 @@
     }
   });
 
+  // Ensure initial render is colored correctly on first load.
+  // (Some builds don't call onLetterLand for the initial letters.)
+  const initialColor = (animatedText.currentIndex === 0) ? 'oklch(0.9133 0.2195 102.76)' : '#666666';
+  document.querySelectorAll('.flap-content').forEach(el => {
+    el.style.color = initialColor;
+  });
+
   // Apply board font (flip mode)
   document.querySelectorAll('.letter-flap, .flap-content').forEach(el => {
     el.style.fontFamily = "'Source Code Pro', monospace";

@@ -132,6 +132,19 @@ class WordRotator {
       const letter = currentWord[i] || " "
       this.setLetterContent(flap, letter, letter)
     })
+
+    // IMPORTANT: On first render, letters are already "landed" but no animation runs,
+    // so consumers relying on `onLetterLand` (e.g. to color accent letters) won't
+    // get called until the first rotation. Call it once here to apply initial state.
+    if (this.onLetterLand) {
+      const wordIndex = this.currentIndex
+      this.letterFlaps.forEach((flap, i) => {
+        const letter = currentWord[i] || " "
+        const wheel = this.getWheelCharSet(i)
+        const isAccent = (wordIndex === 0) && (letter === wheel.accentChar) && (wheel.accentChar !== " ")
+        this.onLetterLand(i, letter, wordIndex, isAccent)
+      })
+    }
     
     // Set initial width
     this.updateContainerWidth()
